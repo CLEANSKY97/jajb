@@ -87,7 +87,9 @@ public class JSONTest {
 
   @Test
   public void testPOJO2() throws Exception {
-    test("{\"group\":{\"s1\":\"a\",\"s2\":\"b\"}," +
+    test("{\"group\":{}," +
+        "\"items\":[],\"num\":1,\"str\":\"1\"}",
+        "{\"group\":{\"s1\":null,\"s2\":null}," +
         "\"items\":[],\"num\":1,\"str\":\"1\"}",
         TestVO.class, new ObjectHandler() {
       @Override
@@ -107,6 +109,8 @@ public class JSONTest {
   public void testPOJO3() throws Exception {
     test("{\"group\":{\"s1\":\"a\",\"s2\":\"b\"}," +
         "\"items\":[{\"f1\":\"@\",\"f2\":2}],\"num\":1,\"str\":\"1\"}",
+        "{\"group\":{\"s1\":\"a\",\"s2\":\"b\"}," +
+        "\"items\":[{\"f1\":\"@\"}],\"num\":1,\"str\":\"1\"}",
         TestVO.class, new ObjectHandler() {
       @Override
       public Object handle(Object obj) {
@@ -116,6 +120,24 @@ public class JSONTest {
         Assert.assertEquals(1, vo.getNum() );
         Assert.assertNotNull(vo.getGroup() );
         Assert.assertNotNull(vo.getItems() );
+        return obj;
+      }
+    });
+  }
+
+  @Test
+  public void testPOJO4() throws Exception {
+    test("{\"flg\":true,\"group\":null,\"items\":null,\"num\":1,\"str\":\"1\"}",
+        TestVO4.class, new ObjectHandler() {
+      @Override
+      public Object handle(Object obj) {
+        Assert.assertEquals(TestVO4.class, obj.getClass() );
+        TestVO4 vo = (TestVO4)obj;
+        Assert.assertEquals("1", vo.getStr() );
+        Assert.assertEquals(1, vo.getNum() );
+        Assert.assertTrue(vo.isFlg() );
+        Assert.assertNull(vo.getGroup() );
+        Assert.assertNull(vo.getItems() );
         return obj;
       }
     });

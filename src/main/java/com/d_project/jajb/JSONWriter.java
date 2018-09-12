@@ -95,12 +95,12 @@ public class JSONWriter extends FilterWriter {
 
       try {
 
-        writeCharSequence(fieldInfo.getField().getName() );
+        writeCharSequence(fieldInfo.getName() );
         out.write(':');
-        writeAny(fieldInfo.getField().get(obj) );
+        writeAny(fieldInfo.get(obj) );
 
       } catch(Exception e) {
-        throw new RuntimeException(fieldInfo.getField().getName() +
+        throw new RuntimeException(fieldInfo.getName() +
             '.' + e.getMessage(), e);
       }
 

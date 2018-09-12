@@ -1,6 +1,5 @@
 package com.d_project.jajb;
 
-import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,79 +56,21 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
     final Object target = objData.target;
 
     if (target == null) {
+
+      // root
+
     } else if (target.getClass().
         getAnnotation(JSONSerializable.class) != null) {
-      if (objData.dataIndex % 2 == 0) {
 
+      if (objData.dataIndex % 2 == 1) {
+        setProperty(target, (String)objData.lastData, data);
+      } else {
         final String name = (String)data;
-        final FieldInfo fieldInfo =
-            MetadataCache.getMetadata(target.getClass() ).
-            getFieldInfo(name);
-        if (fieldInfo == null) {
-          throw new NoSuchFieldException(name);
-        }
-
-        final Class<?> fieldType = fieldInfo.getField().getType();
-        if (Collection.class.isAssignableFrom(fieldType) ) {
-          final ParameterizedType pt =
-              (ParameterizedType)fieldInfo.getField().getGenericType();
-          targetClass = Class.forName(
-              pt.getActualTypeArguments()[0].getTypeName() );
-        } else {
-          targetClass = fieldType;
-        }
-
-      } else if (objData.dataIndex % 2 == 1) {
-
-        final String name = (String)objData.lastData;
-        final FieldInfo fieldInfo =
-            MetadataCache.getMetadata(target.getClass() ).
-            getFieldInfo(name);
-        if (fieldInfo == null) {
-          throw new NoSuchFieldException(name);
-        }
-
-        final Class<?> fieldType = fieldInfo.getField().getType();
-        if (data instanceof BigDecimal) {
-          final BigDecimal dec = (BigDecimal)data;
-
-          if (fieldType.equals(Integer.class) ) {
-            fieldInfo.getField().set(target, dec.intValue() );
-          } else if (fieldType.equals(Integer.TYPE) ) {
-            fieldInfo.getField().set(target, dec.intValue() );
-
-          } else if (fieldType.equals(Long.class) ) {
-            fieldInfo.getField().set(target, dec.longValue() );
-          } else if (fieldType.equals(Long.TYPE) ) {
-            fieldInfo.getField().set(target, dec.longValue() );
-
-          } else if (fieldType.equals(Byte.class) ) {
-            fieldInfo.getField().set(target, dec.byteValue() );
-          } else if (fieldType.equals(Byte.TYPE) ) {
-            fieldInfo.getField().set(target, dec.byteValue() );
-
-          } else if (fieldType.equals(Short.class) ) {
-            fieldInfo.getField().set(target, dec.shortValue() );
-          } else if (fieldType.equals(Short.TYPE) ) {
-            fieldInfo.getField().set(target, dec.shortValue() );
-
-          } else if (fieldType.equals(Float.class) ) {
-            fieldInfo.getField().set(target, dec.floatValue() );
-          } else if (fieldType.equals(Float.TYPE) ) {
-            fieldInfo.getField().set(target, dec.floatValue() );
-
-          } else if (fieldType.equals(Double.class) ) {
-            fieldInfo.getField().set(target, dec.doubleValue() );
-          } else if (fieldType.equals(Double.TYPE) ) {
-            fieldInfo.getField().set(target, dec.doubleValue() );
-
-          } else {
-            fieldInfo.getField().set(target, data);
-          }
-
-        } else {
-          fieldInfo.getField().set(target, data);
-        }
+        final FieldInfo fieldInfo = MetadataCache.getMetadata(
+            target.getClass() ).getFieldInfo(name);
+        targetClass = fieldInfo == null? null :
+            fieldInfo.getIterableType() != null?
+            fieldInfo.getIterableType() : fieldInfo.getType();
       }
 
     } else if (target instanceof Map) {
@@ -149,6 +90,61 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
     objData.dataIndex += 1;
   }
 
+  protected void setProperty(final Object target,
+      final String name, final Object value) throws Exception {
+
+    final FieldInfo fieldInfo =
+        MetadataCache.getMetadata(target.getClass() ).
+        getFieldInfo(name);
+    if (fieldInfo == null) {
+      return;
+    }
+
+    final Class<?> fieldType = fieldInfo.getType();
+
+    if (value instanceof BigDecimal) {
+
+      final BigDecimal dec = (BigDecimal)value;
+
+      if (fieldType.equals(Integer.TYPE) ) {
+        fieldInfo.set(target, dec.intValue() );
+      } else if (fieldType.equals(Integer.class) ) {
+        fieldInfo.set(target, dec.intValue() );
+
+      } else if (fieldType.equals(Long.TYPE) ) {
+        fieldInfo.set(target, dec.longValue() );
+      } else if (fieldType.equals(Long.class) ) {
+        fieldInfo.set(target, dec.longValue() );
+
+      } else if (fieldType.equals(Byte.TYPE) ) {
+        fieldInfo.set(target, dec.byteValue() );
+      } else if (fieldType.equals(Byte.class) ) {
+        fieldInfo.set(target, dec.byteValue() );
+
+      } else if (fieldType.equals(Short.TYPE) ) {
+        fieldInfo.set(target, dec.shortValue() );
+      } else if (fieldType.equals(Short.class) ) {
+        fieldInfo.set(target, dec.shortValue() );
+
+      } else if (fieldType.equals(Float.TYPE) ) {
+        fieldInfo.set(target, dec.floatValue() );
+      } else if (fieldType.equals(Float.class) ) {
+        fieldInfo.set(target, dec.floatValue() );
+
+      } else if (fieldType.equals(Double.TYPE) ) {
+        fieldInfo.set(target, dec.doubleValue() );
+      } else if (fieldType.equals(Double.class) ) {
+        fieldInfo.set(target, dec.doubleValue() );
+
+      } else {
+        fieldInfo.set(target, value);
+      }
+
+    } else {
+      fieldInfo.set(target, value);
+    }
+  }
+
   public Object getLastData() {
     return stack.peek().lastData;
   }
@@ -161,4 +157,5 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
       this.target = target;
     }
   }
+
 }
