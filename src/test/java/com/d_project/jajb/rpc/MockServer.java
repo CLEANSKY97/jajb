@@ -2,10 +2,8 @@ package com.d_project.jajb.rpc;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -15,7 +13,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * MockServer
+ * @author Kazuhiko Arase
+ */
 public class MockServer implements InvocationHandler {
 
   private Object reqProxy;

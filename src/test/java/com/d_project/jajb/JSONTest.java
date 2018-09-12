@@ -3,6 +3,10 @@ package com.d_project.jajb;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * JSONTest
+ * @author Kazuhiko Arase
+ */
 public class JSONTest {
 
   protected interface ObjectHandler {

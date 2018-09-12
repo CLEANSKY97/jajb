@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ObjectUtil
+ * @author Kazuhiko Arase
+ */
 public class ObjectUtil {
   private ObjectUtil() {
   }

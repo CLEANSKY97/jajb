@@ -9,11 +9,16 @@ import com.d_project.jajb.JSON;
 import com.d_project.jajb.TestVO;
 import com.d_project.jajb.rpc.RPCServlet;
 
+/**
+ * RPCTest
+ * @author Kazuhiko Arase
+ */
 public class RPCTest {
 
   @Before
   public void prepare() throws Exception {
-    ServiceLocator.getInstance().registerService("TestService", new TestService() );
+    ServiceLocator.getInstance().
+      registerService("TestService", new TestService() );
   }
 
   @Test
