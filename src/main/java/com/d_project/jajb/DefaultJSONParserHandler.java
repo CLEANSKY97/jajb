@@ -13,7 +13,7 @@ import java.util.Stack;
  */
 public class DefaultJSONParserHandler implements JSONParserHandler {
 
-  protected final Stack<StackData> stack = new Stack<>();
+  protected final Stack<StackData> stack = new Stack<StackData>();
 
   public DefaultJSONParserHandler() {
     stack.push(new StackData(null) );
@@ -21,7 +21,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   @Override
   public void beginArray() throws IOException {
-    stack.push(new StackData(new ArrayList<>() ) );
+    stack.push(new StackData(new ArrayList<Object>() ) );
   }
 
   @Override
@@ -31,7 +31,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   @Override
   public void beginObject() throws IOException {
-    stack.push(new StackData(new LinkedHashMap<>() ) );
+    stack.push(new StackData(new LinkedHashMap<String,Object>() ) );
   }
 
   @Override
