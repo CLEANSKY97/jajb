@@ -63,25 +63,30 @@ class Metadata {
     private final Method setter;
 
     public FieldInfo(
-        final Class<?> target, final Field field) throws Exception {
+        final Class<?> target, final Field field) {
+      try {
+        this.name = field.getName();
+        this.type = field.getType();
 
-      this.name = field.getName();
-      this.type = field.getType();
+        if (Iterable.class.isAssignableFrom(type) ) {
+          final ParameterizedType pt =
+              (ParameterizedType)field.getGenericType();
+          iterableType = Class.forName(
+              pt.getActualTypeArguments()[0].getTypeName() );
+        } else {
+          iterableType = null;
+        }
 
-      if (Iterable.class.isAssignableFrom(type) ) {
-        final ParameterizedType pt =
-            (ParameterizedType)field.getGenericType();
-        iterableType = Class.forName(
-            pt.getActualTypeArguments()[0].getTypeName() );
-      } else {
-        iterableType = null;
+        final String nameSuffix = name.substring(0, 1).toUpperCase() +
+            name.substring(1);
+        getter = findGetter(target, nameSuffix);
+        setter = target.getMethod("set" + nameSuffix,
+            new Class[] { field.getType() });
+      } catch(RuntimeException e) { 
+        throw e;
+      } catch(Exception e) { 
+        throw new RuntimeException(e);
       }
-
-      final String nameSuffix = name.substring(0, 1).toUpperCase() +
-          name.substring(1);
-      getter = findGetter(target, nameSuffix);
-      setter = target.getMethod("set" + nameSuffix,
-          new Class[] { field.getType() });
     }
     public String getName() {
       return name;
@@ -92,16 +97,30 @@ class Metadata {
     public Class<?> getIterableType() {
       return iterableType;
     }
-    public Object get(final Object target) throws Exception {
+    public Object get(final Object target) {
+      try {
+      } catch(RuntimeException e) { 
+        throw e;
+      } catch(Exception e) { 
+        throw new RuntimeException(e);
+      }
+      
       return getter.invoke(target);
     }
     public void set(final Object target,
-        final Object value) throws Exception {
+        final Object value) throws NoSuchMethodException {
+      try {
+      } catch(RuntimeException e) { 
+        throw e;
+      } catch(Exception e) { 
+        throw new RuntimeException(e);
+      }
       setter.invoke(target, value);
     }
 
     protected static Method findGetter(
-        final Class<?> target, final String nameSuffix) throws Exception {
+        final Class<?> target, final String nameSuffix
+        ) throws NoSuchMethodException {
       try {
         return target.getMethod("get" + nameSuffix);
       } catch(NoSuchMethodException e) {

@@ -2,6 +2,7 @@ package com.d_project.jajb;
 
 import java.io.EOFException;
 import java.io.FilterReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -25,18 +26,18 @@ public class JSONParser extends FilterReader {
     this.handler = handler;
   }
 
-  protected void inc() throws Exception {
+  protected void inc() throws IOException {
     if (buf == -1) {
-      throw new Exception();
+      throw new IOException();
     }
     buf = -1;
   }
 
-  protected char seekChar() throws Exception {
+  protected char seekChar() throws IOException {
     return seekChar(false);
   }
 
-  protected char seekChar(final boolean strict) throws Exception {
+  protected char seekChar(final boolean strict) throws IOException {
     if (eof) {
       throw new EOFException();
     }
@@ -59,7 +60,7 @@ public class JSONParser extends FilterReader {
     return (char)0;
   }
 
-  protected void parseObject() throws Exception {
+  protected void parseObject() throws IOException {
 
     handler.beginObject();
 
@@ -80,14 +81,14 @@ public class JSONParser extends FilterReader {
 
       c = seekChar();
       if (c != '"') {
-        throw new Exception("invalid char:" + c);
+        throw new IOException("invalid char:" + c);
       }
 
       handler.onData(readString() );
 
       c = seekChar();
       if (c != ':') {
-        throw new Exception("invalid char:" + c);
+        throw new IOException("invalid char:" + c);
       }
 
       inc();
@@ -98,7 +99,7 @@ public class JSONParser extends FilterReader {
     handler.endObject();
   }
 
-  protected void parseArray() throws Exception {
+  protected void parseArray() throws IOException {
 
     handler.beginArray();
 
@@ -123,18 +124,18 @@ public class JSONParser extends FilterReader {
   }
 
   protected Object readKeyword(
-      final String keyword, final Object object) throws Exception {
+      final String keyword, final Object object) throws IOException {
     for (int i = 0; i < keyword.length(); i += 1) {
       final char c = seekChar(true);
       if (c != keyword.charAt(i) ) {
-        throw new Exception("invalid char:" + c);
+        throw new IOException("invalid char:" + c);
       }
       inc();
     }
     return object;
   }
 
-  protected String readString() throws Exception {
+  protected String readString() throws IOException {
 
     final StringBuilder str = new StringBuilder();
     char c;
@@ -162,7 +163,7 @@ public class JSONParser extends FilterReader {
           for (int i = 0; i < 4; i += 1) {
             c = seekChar(true);
             if (!isHexChar(c) ) {
-              throw new Exception("invalid char:" + c);
+              throw new IOException("invalid char:" + c);
             }
             inc();
             charCode = (charCode << 4) | 
@@ -180,7 +181,7 @@ public class JSONParser extends FilterReader {
     }
   }
 
-  protected void readNumChars(final StringBuilder num) throws Exception {
+  protected void readNumChars(final StringBuilder num) throws IOException {
     while (true) {
       final char c = seekChar(true);
       if (!isNumChar(c) ) {
@@ -191,7 +192,7 @@ public class JSONParser extends FilterReader {
     }
   }
 
-  protected BigDecimal readNumber() throws Exception {
+  protected BigDecimal readNumber() throws IOException {
 
     final StringBuilder num = new StringBuilder();
     char c;
@@ -228,7 +229,7 @@ public class JSONParser extends FilterReader {
     return new BigDecimal(num.toString() );
   }
 
-  public void parseAny() throws Exception {
+  public void parseAny() throws IOException {
     final char c = seekChar();
     if (c == 0) {
       handler.onData(null);
@@ -249,7 +250,7 @@ public class JSONParser extends FilterReader {
     } else if (c == '{') {
       parseObject();
     } else {
-      throw new Exception("invalid char:" + c);
+      throw new IOException("invalid char:" + c);
     }
   }
 

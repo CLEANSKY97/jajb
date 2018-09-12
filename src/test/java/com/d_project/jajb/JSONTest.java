@@ -127,7 +127,8 @@ public class JSONTest {
 
   @Test
   public void testPOJO4() throws Exception {
-    test("{\"flg\":true,\"group\":null,\"items\":null,\"num\":1,\"str\":\"1\"}",
+    test("{\"arr\":[1,2,3],\"flg\":true,\"group\":null," +
+        "\"items\":null,\"num\":1,\"str\":\"1\"}",
         TestVO4.class, new ObjectHandler() {
       @Override
       public Object handle(Object obj) {
@@ -138,6 +139,10 @@ public class JSONTest {
         Assert.assertTrue(vo.isFlg() );
         Assert.assertNull(vo.getGroup() );
         Assert.assertNull(vo.getItems() );
+        Assert.assertEquals(3, vo.getArr().length);
+        Assert.assertEquals(1, vo.getArr()[0]);
+        Assert.assertEquals(2, vo.getArr()[1]);
+        Assert.assertEquals(3, vo.getArr()[2]);
         return obj;
       }
     });

@@ -1,9 +1,12 @@
 package com.d_project.jajb;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -17,7 +20,11 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   protected final Stack<StackData> stack = new Stack<StackData>();
 
-  protected Class<?> targetClass;
+  private Class<?> targetClass;
+
+  public DefaultJSONParserHandler() {
+    this(null);
+  }
 
   public DefaultJSONParserHandler(final Class<?> targetClass) {
     stack.push(new StackData(null) );
@@ -34,13 +41,25 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
     onData(stack.pop().target);
   }
 
+  protected Object getTargetObject(
+      Class<?> targetClass, Object[] path) throws Exception {
+    System.out.println(Arrays.asList(path) );
+    if (targetClass != null) {
+      return targetClass.newInstance();
+    } else {
+      return new LinkedHashMap<String,Object>();
+    }
+  }
+
   @Override
   public void beginObject() throws Exception {
-    if (this.targetClass != null) {
-      stack.push(new StackData(targetClass.newInstance() ) );
-    } else {
-      stack.push(new StackData(new LinkedHashMap<String,Object>() ) );
+    final Object[] path = new Object[stack.size() - 1];
+    for (int i = 0; i < path.length; i += 1) {
+      final StackData objData = stack.get(i + 1);
+      path[i] = objData.target instanceof Collection?
+          objData.dataIndex : objData.name;
     }
+    stack.push(new StackData(getTargetObject(targetClass, path) ) );
   }
 
   @Override
@@ -65,9 +84,9 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
       if (objData.dataIndex % 2 == 1) {
         setProperty(target, (String)objData.lastData, data);
       } else {
-        final String name = (String)data;
+        objData.name = (String)data;
         final FieldInfo fieldInfo = MetadataCache.getMetadata(
-            target.getClass() ).getFieldInfo(name);
+            target.getClass() ).getFieldInfo(objData.name);
         targetClass = fieldInfo == null? null :
             fieldInfo.getIterableType() != null?
             fieldInfo.getIterableType() : fieldInfo.getType();
@@ -75,19 +94,74 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
     } else if (target instanceof Map) {
 
-      if (objData.dataIndex % 2 == 0) {
-        targetClass = null;
-      } else if (objData.dataIndex % 2 == 1) {
+      if (objData.dataIndex % 2 == 1) {
         ((Map<Object,Object>)target).put(objData.lastData, data);
+      } else {
+        objData.name = (String)data;
       }
 
     } else if (target instanceof Collection) {
-      targetClass = null;
       ((Collection<Object>)target).add(data);
     }
 
     objData.lastData = data;
     objData.dataIndex += 1;
+  }
+
+  protected Object castValue(
+      final Class<?> clazz, final Object value) {
+    if (value instanceof BigDecimal) {
+
+      final BigDecimal dec = (BigDecimal)value;
+
+      if (clazz.equals(Integer.TYPE) ) {
+        return dec.intValue();
+      } else if (clazz.equals(Integer.class) ) {
+        return dec.intValue();
+
+      } else if (clazz.equals(Long.TYPE) ) {
+        return dec.longValue();
+      } else if (clazz.equals(Long.class) ) {
+        return dec.longValue();
+
+      } else if (clazz.equals(Byte.TYPE) ) {
+        return dec.byteValue();
+      } else if (clazz.equals(Byte.class) ) {
+        return dec.byteValue();
+
+      } else if (clazz.equals(Short.TYPE) ) {
+        return dec.shortValue();
+      } else if (clazz.equals(Short.class) ) {
+        return dec.shortValue();
+
+      } else if (clazz.equals(Float.TYPE) ) {
+        return dec.floatValue();
+      } else if (clazz.equals(Float.class) ) {
+        return dec.floatValue();
+
+      } else if (clazz.equals(Double.TYPE) ) {
+        return dec.doubleValue();
+      } else if (clazz.equals(Double.class) ) {
+        return dec.doubleValue();
+
+      } else {
+        return value;
+      }
+
+    } else if (clazz.isArray() ) {
+
+      final List<?> list = (List<?>)value;
+      final int len = list.size();
+      final Class<?> ctype = clazz.getComponentType();
+      final Object array = Array.newInstance(ctype, len);
+      for (int i = 0; i < len; i += 1) {
+        Array.set(array, i, castValue(ctype, list.get(i) ) );
+      }
+      return array;
+
+    } else {
+      return value;
+    }
   }
 
   protected void setProperty(final Object target,
@@ -100,49 +174,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
       return;
     }
 
-    final Class<?> fieldType = fieldInfo.getType();
-
-    if (value instanceof BigDecimal) {
-
-      final BigDecimal dec = (BigDecimal)value;
-
-      if (fieldType.equals(Integer.TYPE) ) {
-        fieldInfo.set(target, dec.intValue() );
-      } else if (fieldType.equals(Integer.class) ) {
-        fieldInfo.set(target, dec.intValue() );
-
-      } else if (fieldType.equals(Long.TYPE) ) {
-        fieldInfo.set(target, dec.longValue() );
-      } else if (fieldType.equals(Long.class) ) {
-        fieldInfo.set(target, dec.longValue() );
-
-      } else if (fieldType.equals(Byte.TYPE) ) {
-        fieldInfo.set(target, dec.byteValue() );
-      } else if (fieldType.equals(Byte.class) ) {
-        fieldInfo.set(target, dec.byteValue() );
-
-      } else if (fieldType.equals(Short.TYPE) ) {
-        fieldInfo.set(target, dec.shortValue() );
-      } else if (fieldType.equals(Short.class) ) {
-        fieldInfo.set(target, dec.shortValue() );
-
-      } else if (fieldType.equals(Float.TYPE) ) {
-        fieldInfo.set(target, dec.floatValue() );
-      } else if (fieldType.equals(Float.class) ) {
-        fieldInfo.set(target, dec.floatValue() );
-
-      } else if (fieldType.equals(Double.TYPE) ) {
-        fieldInfo.set(target, dec.doubleValue() );
-      } else if (fieldType.equals(Double.class) ) {
-        fieldInfo.set(target, dec.doubleValue() );
-
-      } else {
-        fieldInfo.set(target, value);
-      }
-
-    } else {
-      fieldInfo.set(target, value);
-    }
+    fieldInfo.set(target, castValue(fieldInfo.getType(), value) );
   }
 
   public Object getLastData() {
@@ -151,6 +183,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   protected static class StackData {
     public final Object target;
+    public String name = null;
     public Object lastData = null;
     public int dataIndex = 0;
     public StackData(Object target) {
