@@ -18,15 +18,21 @@ public class RPCTest {
 
   @Test
   public void test() throws Exception {
+
     TestVO reqVO = new TestVO();
+    reqVO.setNum(1);
     System.out.println(reqVO);
+
     MockServer mock = new MockServer();
     mock.setRequestData(JSON.stringify(ObjectUtil.asList(
         ObjectUtil.asMap(
             "serviceName", "TestService",
             "methodName", "test"),
         ObjectUtil.asList(1, 2, reqVO) ) ) );
+
     HttpServlet servlet = new RPCServlet();
     servlet.service(mock.getRequest(), mock.getResponse() );
+    System.out.println(mock.getResponseData() );
+
   }
 }

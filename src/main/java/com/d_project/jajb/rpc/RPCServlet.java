@@ -2,6 +2,7 @@ package com.d_project.jajb.rpc;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.d_project.jajb.JSONParser;
+import com.d_project.jajb.JSONWriter;
 
 /**
  * RPCServlet
@@ -29,7 +31,7 @@ public class RPCServlet extends HttpServlet {
 
     request.setCharacterEncoding("UTF-8");
 
-    Map<String,Object> responseData = new LinkedHashMap<String, Object>();
+    final Map<String,Object> responseData = new LinkedHashMap<String, Object>();
     responseData.put("status", "success");
 
     final JSONParser parser = new JSONParser(request.getReader(), invoker);
@@ -44,7 +46,14 @@ public class RPCServlet extends HttpServlet {
     } finally {
       parser.close();
     }
-    System.out.println(responseData);
+    
+    response.setContentType("application/json");
+    JSONWriter out = new JSONWriter(response.getWriter() );
+    try {
+      out.writeAny(responseData);
+    } finally {
+      out.close();
+    }
   }
 
   protected RPCInvokerHandler createInvoker() {

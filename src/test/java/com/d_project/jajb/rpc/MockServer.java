@@ -1,12 +1,17 @@
 package com.d_project.jajb.rpc;
 
 import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,6 +21,11 @@ public class MockServer implements InvocationHandler {
   private Object reqProxy;
   private Object resProxy;
 
+  private StringReader in = null;
+  private StringWriter out = null;
+
+  private String requestData = "";
+
   public MockServer() throws Exception {
     reqProxy = Proxy.newProxyInstance(getClass().getClassLoader(),
         new Class[] { HttpServletRequest.class }, this);
@@ -23,13 +33,13 @@ public class MockServer implements InvocationHandler {
         new Class[] { HttpServletResponse.class }, this);
   }
 
-  private String requestData = "";
-  private StringReader in = null;
-
   public void setRequestData(String requestData) {
     this.requestData = requestData;
   }
 
+  public String getResponseData() {
+    return out.toString();
+  }
 
   @Override
   public Object invoke(Object proxy, Method method, Object[] args)
@@ -46,12 +56,22 @@ public class MockServer implements InvocationHandler {
         }
         in = new StringReader(requestData);
         return new BufferedReader(in);
+      } else {
+        throw new RuntimeException("not implemented:" + method.getName() );
       }
-      throw new RuntimeException("not implemented.");
-    } else if (HttpServletResponse.class.
+    } else if (ServletResponse.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
-
-      throw new RuntimeException("not implemented.");
+      if (method.getName().equals("setContentType") ) {
+        return null;
+      } else if (method.getName().equals("getWriter") ) {
+        if (out != null) {
+          throw new RuntimeException("already got.");
+        }
+        out = new StringWriter();
+        return new PrintWriter(out);
+      } else {
+        throw new RuntimeException("not implemented:" + method.getName() );
+      }
     } else {
       return method.invoke(MockServer.this);
     }
