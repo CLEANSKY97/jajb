@@ -1,6 +1,6 @@
 
-apply plugin: "war"
-apply plugin: "eclipse-wtp"
+apply plugin: "java"
+apply plugin: "eclipse"
 apply plugin: "maven"
 
 sourceCompatibility = 1.8
@@ -9,20 +9,6 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 configurations {
-}
-
-eclipse {
-  classpath {
-    defaultOutputDir = file("build/wtp/classes")
-  }
-  wtp {
-    component {
-      contextPath = "jajb"
-      deployName = "jajb"
-      resource sourcePath: "src/main/webapp", deployPath: "/"
-      property name: "java-output-path", value: "/jajb/build/wtp/classes"
-    }
-  }
 }
 
 task createPom << {
@@ -68,9 +54,8 @@ repositories {
 }
 
 dependencies {
-  compile "javax.servlet:jstl:1.2"
   compile "org.slf4j:slf4j-log4j12:1.6.3"
 
-  providedCompile "javax.servlet:javax.servlet-api:3.0.1"
+  testCompile "javax.servlet:javax.servlet-api:3.0.1"
   testCompile "junit:junit:4.4"
 }
