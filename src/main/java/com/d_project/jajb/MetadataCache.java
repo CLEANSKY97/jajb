@@ -11,7 +11,7 @@ class MetadataCache {
   private static ConcurrentHashMap<Class<?>, Metadata> cache =
       new ConcurrentHashMap<Class<?>, Metadata>();
 
-  public static Metadata getMetadata(Class<?> clazz) throws Exception {
+  public static Metadata getMetadata(Class<?> clazz) {
     Metadata metadata = cache.get(clazz);
     if (metadata == null) {
       metadata = new Metadata(clazz);
