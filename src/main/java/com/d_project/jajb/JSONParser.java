@@ -17,7 +17,8 @@ public class JSONParser extends FilterReader {
   private boolean eof;
   private final JSONParserHandler handler;
 
-  public JSONParser(final Reader in, JSONParserHandler handler) {
+  public JSONParser(final Reader in,
+      final JSONParserHandler handler) {
     super(in);
     this.buf = -1;
     this.eof = false;
@@ -207,7 +208,7 @@ public class JSONParser extends FilterReader {
       inc();
       readNumChars(num);
     }
-    
+
     // exp
     c = seekChar();
     if (c == 'e' || c == 'E') {
@@ -220,12 +221,8 @@ public class JSONParser extends FilterReader {
       }
       readNumChars(num);
     }
-    
-    final BigDecimal n = new BigDecimal(num.toString() );
-    if (Double.isNaN(n.doubleValue() ) ) {
-      throw new IOException("not a number:" + num);
-    }
-    return n;
+
+    return new BigDecimal(num.toString() );
   }
 
   public void parseAny() throws IOException {
@@ -277,4 +274,3 @@ public class JSONParser extends FilterReader {
       'a' <= c && c <= 'f' || 'A' <= c && c <= 'F';
   }
 }
-

@@ -7,7 +7,7 @@
   <packaging>jar</packaging>
 
   <name>jajb</name>
-  <description>https://github.com/kazuhikoarase/jajb</description>
+  <description>Java Architecture for JSON Binding</description>
   <url>https://github.com/kazuhikoarase/jajb</url>
 
   <licenses>
@@ -25,6 +25,12 @@
       <organizationUrl>https://kazuhikoarase.github.io/</organizationUrl>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/kazuhikoarase/jajb.git</connection>
+    <developerConnection>scm:git:ssh://github.com:kazuhikoarase/jajb.git</developerConnection>
+    <url>https://github.com/kazuhikoarase/jajb/tree/master</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
