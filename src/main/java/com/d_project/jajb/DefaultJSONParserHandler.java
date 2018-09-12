@@ -1,11 +1,14 @@
 package com.d_project.jajb;
 
-import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Stack;
+
+import com.d_project.jajb.Metadata.FieldInfo;
 
 /**
  * DefaultJSONParserHandler
@@ -15,48 +18,135 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   protected final Stack<StackData> stack = new Stack<StackData>();
 
-  public DefaultJSONParserHandler() {
+  protected Class<?> targetClass;
+
+  public DefaultJSONParserHandler(final Class<?> targetClass) {
     stack.push(new StackData(null) );
+    this.targetClass = targetClass;
   }
 
   @Override
-  public void beginArray() throws IOException {
+  public void beginArray() throws Exception {
     stack.push(new StackData(new ArrayList<Object>() ) );
   }
 
   @Override
-  public void endArray() throws IOException {
+  public void endArray() throws Exception {
     onData(stack.pop().target);
   }
 
   @Override
-  public void beginObject() throws IOException {
-    stack.push(new StackData(new LinkedHashMap<String,Object>() ) );
+  public void beginObject() throws Exception {
+    if (this.targetClass != null) {
+      stack.push(new StackData(targetClass.newInstance() ) );
+    } else {
+      stack.push(new StackData(new LinkedHashMap<String,Object>() ) );
+    }
   }
 
   @Override
-  public void endObject() throws IOException {
+  public void endObject() throws Exception {
     onData(stack.pop().target);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public void onData(final Object data) throws IOException {
+  public void onData(final Object data) throws Exception {
 
     final StackData objData = stack.peek();
     final Object target = objData.target;
 
     if (target == null) {
+    } else if (target.getClass().
+        getAnnotation(JSONSerializable.class) != null) {
+      if (objData.dataIndex % 2 == 0) {
+
+        final String name = (String)data;
+        final FieldInfo fieldInfo =
+            MetadataCache.getMetadata(target.getClass() ).
+            getFieldInfo(name);
+        if (fieldInfo == null) {
+          throw new NoSuchFieldException(name);
+        }
+
+        final Class<?> fieldType = fieldInfo.getField().getType();
+        if (Collection.class.isAssignableFrom(fieldType) ) {
+          final ParameterizedType pt =
+              (ParameterizedType)fieldInfo.getField().getGenericType();
+          targetClass = Class.forName(
+              pt.getActualTypeArguments()[0].getTypeName() );
+        } else {
+          targetClass = fieldType;
+        }
+
+      } else if (objData.dataIndex % 2 == 1) {
+
+        final String name = (String)objData.lastData;
+        final FieldInfo fieldInfo =
+            MetadataCache.getMetadata(target.getClass() ).
+            getFieldInfo(name);
+        if (fieldInfo == null) {
+          throw new NoSuchFieldException(name);
+        }
+
+        final Class<?> fieldType = fieldInfo.getField().getType();
+        if (data instanceof BigDecimal) {
+          final BigDecimal dec = (BigDecimal)data;
+
+          if (fieldType.equals(Integer.class) ) {
+            fieldInfo.getField().set(target, dec.intValue() );
+          } else if (fieldType.equals(Integer.TYPE) ) {
+            fieldInfo.getField().set(target, dec.intValue() );
+
+          } else if (fieldType.equals(Long.class) ) {
+            fieldInfo.getField().set(target, dec.longValue() );
+          } else if (fieldType.equals(Long.TYPE) ) {
+            fieldInfo.getField().set(target, dec.longValue() );
+
+          } else if (fieldType.equals(Byte.class) ) {
+            fieldInfo.getField().set(target, dec.byteValue() );
+          } else if (fieldType.equals(Byte.TYPE) ) {
+            fieldInfo.getField().set(target, dec.byteValue() );
+
+          } else if (fieldType.equals(Short.class) ) {
+            fieldInfo.getField().set(target, dec.shortValue() );
+          } else if (fieldType.equals(Short.TYPE) ) {
+            fieldInfo.getField().set(target, dec.shortValue() );
+
+          } else if (fieldType.equals(Float.class) ) {
+            fieldInfo.getField().set(target, dec.floatValue() );
+          } else if (fieldType.equals(Float.TYPE) ) {
+            fieldInfo.getField().set(target, dec.floatValue() );
+
+          } else if (fieldType.equals(Double.class) ) {
+            fieldInfo.getField().set(target, dec.doubleValue() );
+          } else if (fieldType.equals(Double.TYPE) ) {
+            fieldInfo.getField().set(target, dec.doubleValue() );
+
+          } else {
+            fieldInfo.getField().set(target, data);
+          }
+
+        } else {
+          fieldInfo.getField().set(target, data);
+        }
+      }
+
     } else if (target instanceof Map) {
-      if (objData.count % 2 == 1) {
+
+      if (objData.dataIndex % 2 == 0) {
+        targetClass = null;
+      } else if (objData.dataIndex % 2 == 1) {
         ((Map<Object,Object>)target).put(objData.lastData, data);
       }
+
     } else if (target instanceof Collection) {
+      targetClass = null;
       ((Collection<Object>)target).add(data);
     }
 
     objData.lastData = data;
-    objData.count += 1;
+    objData.dataIndex += 1;
   }
 
   public Object getLastData() {
@@ -66,7 +156,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
   protected static class StackData {
     public final Object target;
     public Object lastData = null;
-    public int count = 0;
+    public int dataIndex = 0;
     public StackData(Object target) {
       this.target = target;
     }

@@ -1,11 +1,12 @@
 package com.d_project.jajb;
 
 import java.io.FilterWriter;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.d_project.jajb.Metadata.FieldInfo;
 
 /**
  * JSONWriter
@@ -18,9 +19,11 @@ public class JSONWriter extends FilterWriter {
   }
 
   @SuppressWarnings("unchecked")
-  protected void writeObject(Object obj) throws IOException {
+  protected void writeObject(Object obj) throws Exception {
     if (obj instanceof Map) {
       writeMap( (Map<String,Object>)obj);
+    } else if (obj.getClass().getAnnotation(JSONSerializable.class) != null) {
+      writeSerializable(obj);
     } else if (obj instanceof Iterable<?>) {
       writeIterable( (Iterable<Object>)obj);
     } else {
@@ -29,7 +32,7 @@ public class JSONWriter extends FilterWriter {
     }
   }
 
-  protected void writeIterable(Iterable<Object> items) throws IOException {
+  protected void writeIterable(Iterable<Object> items) throws Exception {
 
     out.write('[');
 
@@ -49,7 +52,7 @@ public class JSONWriter extends FilterWriter {
     out.write(']');
   }
 
-  protected void writeMap(Map<String, Object> map) throws IOException {
+  protected void writeMap(Map<String, Object> map) throws Exception {
 
     out.write('{');
 
@@ -77,7 +80,37 @@ public class JSONWriter extends FilterWriter {
     out.write('}');
   }
 
-  public void writeCharSequence(final CharSequence s) throws IOException {
+  protected void writeSerializable(Object obj) throws Exception {
+
+    out.write('{');
+
+    int cnt = 0;
+
+    final Metadata meta = MetadataCache.getMetadata(obj.getClass() );
+    for (final FieldInfo fieldInfo : meta.getFieldInfoList() ) {
+
+      if (cnt > 0) {
+        out.write(',');
+      }
+
+      try {
+
+        writeCharSequence(fieldInfo.getField().getName() );
+        out.write(':');
+        writeAny(fieldInfo.getField().get(obj) );
+
+      } catch(Exception e) {
+        throw new RuntimeException(fieldInfo.getField().getName() +
+            '.' + e.getMessage(), e);
+      }
+
+      cnt += 1;
+    }
+
+    out.write('}');
+  }
+
+  protected void writeCharSequence(final CharSequence s) throws Exception {
 
     out.write('"');
     
@@ -107,7 +140,7 @@ public class JSONWriter extends FilterWriter {
     out.write('"');
   }
 
-  public void writeAny(Object obj) throws IOException {
+  public void writeAny(Object obj) throws Exception {
 
     if (obj == null) {
       out.write("null");

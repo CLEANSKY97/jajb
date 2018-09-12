@@ -1,6 +1,5 @@
 package com.d_project.jajb;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -13,7 +12,7 @@ public class JSON {
   private JSON() {
   }
 
-  public static String stringify(final Object obj) throws IOException {
+  public static String stringify(final Object obj) throws Exception {
     final StringWriter sout = new StringWriter();
     final JSONWriter out = new JSONWriter(sout);
     try {
@@ -24,8 +23,14 @@ public class JSON {
     return sout.toString();
   }
 
-  public static Object parse(final String str) throws IOException {
-    final DefaultJSONParserHandler handler = new DefaultJSONParserHandler();
+  public static Object parse(final String str) throws Exception {
+    return parse(str, null);
+  }
+
+  public static Object parse(final String str,
+      final Class<?> targetClass) throws Exception {
+    final DefaultJSONParserHandler handler =
+        new DefaultJSONParserHandler(targetClass);
     final JSONParser in = new JSONParser(new StringReader(str), handler);
     try {
       in.parseAny();
