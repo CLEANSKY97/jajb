@@ -1,16 +1,14 @@
 package com.d_project.jajb;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
-import com.d_project.jajb.Metadata.FieldInfo;
 
 /**
  * DefaultJSONParserHandler
@@ -18,7 +16,7 @@ import com.d_project.jajb.Metadata.FieldInfo;
  */
 public class DefaultJSONParserHandler implements JSONParserHandler {
 
-  protected final Stack<StackData> stack = new Stack<StackData>();
+  private final Stack<StackData> stack = new Stack<StackData>();
 
   private Class<?> targetClass;
 
@@ -26,50 +24,59 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
     this(null);
   }
 
-  public DefaultJSONParserHandler(final Class<?> targetClass) {
+  public DefaultJSONParserHandler(final Class<?> rootClass) {
     stack.push(new StackData(null) );
-    this.targetClass = targetClass;
+    this.targetClass = rootClass;
   }
 
   @Override
-  public void beginArray() throws Exception {
+  public void beginArray() throws IOException {
     stack.push(new StackData(new ArrayList<Object>() ) );
   }
 
   @Override
-  public void endArray() throws Exception {
+  public void endArray() throws IOException {
     onData(stack.pop().target);
   }
 
-  protected Object getTargetObject(
-      Class<?> targetClass, Object[] path) throws Exception {
-    System.out.println(Arrays.asList(path) );
+  protected Object getTargetObject(Class<?> targetClass) {
     if (targetClass != null) {
-      return targetClass.newInstance();
+      try {
+        return targetClass.newInstance();
+      } catch(RuntimeException e) { 
+        throw e;
+      } catch(Exception e) { 
+        throw new RuntimeException(e);
+      }
     } else {
       return new LinkedHashMap<String,Object>();
     }
   }
 
-  @Override
-  public void beginObject() throws Exception {
-    final Object[] path = new Object[stack.size() - 1];
+  protected Object[] getPath() {
+    final Object[] path = new Object[stack.size()];
     for (int i = 0; i < path.length; i += 1) {
-      final StackData objData = stack.get(i + 1);
-      path[i] = objData.target instanceof Collection?
+      final StackData objData = stack.get(i);
+      path[i] = i == 0? "<root>" :
+          objData.target instanceof Collection?
           objData.dataIndex : objData.name;
     }
-    stack.push(new StackData(getTargetObject(targetClass, path) ) );
+    return path;
   }
 
   @Override
-  public void endObject() throws Exception {
+  public void beginObject() throws IOException {
+    stack.push(new StackData(getTargetObject(targetClass) ) );
+  }
+
+  @Override
+  public void endObject() throws IOException {
     onData(stack.pop().target);
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public void onData(final Object data) throws Exception {
+  public void onData(final Object data) throws IOException {
 
     final StackData objData = stack.peek();
     final Object target = objData.target;
@@ -108,7 +115,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
     objData.dataIndex += 1;
   }
 
-  protected Object castValue(
+  protected static Object castValue(
       final Class<?> clazz, final Object value) {
     if (value instanceof BigDecimal) {
 
@@ -165,7 +172,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
   }
 
   protected void setProperty(final Object target,
-      final String name, final Object value) throws Exception {
+      final String name, final Object value) {
 
     final FieldInfo fieldInfo =
         MetadataCache.getMetadata(target.getClass() ).
@@ -179,6 +186,10 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   public Object getLastData() {
     return stack.peek().lastData;
+  }
+
+  public Object getStackObject(int depth) {
+    return stack.get(depth).target;
   }
 
   protected static class StackData {

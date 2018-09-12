@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.d_project.jajb.Metadata.FieldInfo;
-
 /**
  * JSONWriter
  * @author Kazuhiko Arase
