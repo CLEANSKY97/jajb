@@ -23,7 +23,7 @@ class Metadata {
         clazz != null; clazz = clazz.getSuperclass() ) {
 
       final List<FieldInfo> fieldInfoList = new ArrayList<FieldInfo>();
-      for (Field field : clazz.getDeclaredFields() ) {
+      for (final Field field : clazz.getDeclaredFields() ) {
         if (field.getAnnotation(JSONSerializable.class) != null) {
           fieldInfoList.add(new FieldInfo(clazz, field) );
         }
@@ -32,12 +32,12 @@ class Metadata {
       // fix fields order.
       fieldInfoList.sort(new Comparator<FieldInfo>() {
         @Override
-        public int compare(FieldInfo f1, FieldInfo f2) {
+        public int compare(final FieldInfo f1, final FieldInfo f2) {
           return f1.getName().compareTo(f2.getName() );
         }
       });
 
-      for (FieldInfo fieldInfo : fieldInfoList) {
+      for (final FieldInfo fieldInfo : fieldInfoList) {
         if (!fieldInfoMap.containsKey(fieldInfo.getName() ) ) {
           fieldInfoMap.put(fieldInfo.getName(), fieldInfo);
         }
@@ -48,7 +48,7 @@ class Metadata {
   public FieldInfo getFieldInfo(final String name) {
     return fieldInfoMap.get(name);
   }
-  public Iterable<FieldInfo> getFieldInfoList() {
+  public Iterable<FieldInfo> getFieldInfos() {
     return fieldInfoMap.values();
   }
 }

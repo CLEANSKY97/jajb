@@ -28,9 +28,9 @@ public class JSON {
   }
 
   public static Object parse(final String str,
-      final Class<?> targetClass) throws Exception {
+      final Class<?> rootClass) throws Exception {
     final DefaultJSONParserHandler handler =
-        new DefaultJSONParserHandler(targetClass);
+        new DefaultJSONParserHandler(rootClass);
     final JSONParser in = new JSONParser(new StringReader(str), handler);
     try {
       in.parseAny();

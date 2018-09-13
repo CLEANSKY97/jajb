@@ -39,7 +39,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
     onData(stack.pop().target);
   }
 
-  protected Object getTargetObject(Class<?> targetClass) {
+  protected Object getTargetObject(final Class<?> targetClass) {
     if (targetClass != null) {
       try {
         return targetClass.newInstance();
