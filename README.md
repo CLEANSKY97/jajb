@@ -2,6 +2,8 @@ JAJB
 ===
 Java Architecture for JSON Binding
 
+JAJB provides the simplest, shortest way to call the server side java api from the front end javascript.
+
 ## First step
 
 1. Create POJO Service.
