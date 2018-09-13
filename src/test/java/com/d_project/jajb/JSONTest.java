@@ -112,9 +112,9 @@ public class JSONTest {
   @Test
   public void testPOJO3() throws Exception {
     test("{\"group\":{\"s1\":\"a\",\"s2\":\"b\"}," +
-        "\"items\":[{\"f1\":\"@\",\"f2\":2}],\"num\":1,\"str\":\"1\"}",
+        "\"items\":[{\"f1\":\"@\",\"f2\":2},{\"f1\":\"%\"}],\"num\":1,\"str\":\"1\"}",
         "{\"group\":{\"s1\":\"a\",\"s2\":\"b\"}," +
-        "\"items\":[{\"f1\":\"@\"}],\"num\":1,\"str\":\"1\"}",
+        "\"items\":[{\"f1\":\"@\"},{\"f1\":\"%\"}],\"num\":1,\"str\":\"1\"}",
         TestVO.class, new ObjectHandler() {
       @Override
       public Object handle(Object obj) {
@@ -124,6 +124,9 @@ public class JSONTest {
         Assert.assertEquals(1, vo.getNum() );
         Assert.assertNotNull(vo.getGroup() );
         Assert.assertNotNull(vo.getItems() );
+        Assert.assertEquals(2, vo.getItems().size() );
+        Assert.assertEquals("@", vo.getItems().get(0).getF1() );
+        Assert.assertEquals("%", vo.getItems().get(1).getF1() );
         return obj;
       }
     });

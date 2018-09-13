@@ -15,7 +15,7 @@ public class ServiceLocator {
     }
     return instance;
   }
-  private Map<String, Object> services;
+  private final Map<String, Object> services;
   private boolean freezed;
   protected ServiceLocator() {
     services = new HashMap<String, Object>();

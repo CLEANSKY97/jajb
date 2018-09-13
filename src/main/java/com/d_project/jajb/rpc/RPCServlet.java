@@ -38,7 +38,8 @@ public class RPCServlet extends HttpServlet {
 
     request.setCharacterEncoding("UTF-8");
 
-    final Map<String,Object> responseData = new LinkedHashMap<String, Object>();
+    final Map<String,Object> responseData =
+        new LinkedHashMap<String, Object>();
 
     final JSONParser parser = new JSONParser(request.getReader(), invoker);
 
@@ -49,12 +50,12 @@ public class RPCServlet extends HttpServlet {
     } catch(Exception e) {
       responseData.put(STATUS_KEY, STATUS_FAILURE);
       responseData.put(MESSAGE_KEY, e.getMessage() );
-      e.printStackTrace();
+      getServletContext().log(e.getMessage(), e);
     } finally {
       parser.close();
     }
 
-    response.setContentType("application/json");
+    response.setContentType("application/json;charset=UTF-8");
     final JSONWriter out = new JSONWriter(response.getWriter() );
     try {
       out.writeAny(responseData);

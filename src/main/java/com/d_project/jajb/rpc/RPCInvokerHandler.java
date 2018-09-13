@@ -34,7 +34,8 @@ public class RPCInvokerHandler extends DefaultJSONParserHandler {
     super.endArray();
     if (getPath().length == PARAMS_DEPTH) {
       final List<Object> params = (List<Object>)getLastData();
-      final List<Object> args =  (List<Object>)params.get(ARG_INDEX.intValue() );
+      final List<Object> args =
+          (List<Object>)params.get(ARG_INDEX.intValue() );
       for (int i = 0; i < args.size(); i += 1) {
         final Class<?> clazz = targetMethod.getParameterTypes()[i];
         args.set(i, castValue(clazz, args.get(i) ) );
@@ -77,7 +78,8 @@ public class RPCInvokerHandler extends DefaultJSONParserHandler {
     return super.getTargetObject(targetClass);
   }
 
-  protected Method findTargetMethod(Object obj, String methodName) {
+  protected Method findTargetMethod(
+      final Object obj, final String methodName) {
     // TODO en-cache
     for (Class<?> clazz = obj.getClass();
         clazz != null; clazz = clazz.getSuperclass() ) {
@@ -85,8 +87,7 @@ public class RPCInvokerHandler extends DefaultJSONParserHandler {
       for (final Method method : clazz.getDeclaredMethods() ) {
         if (method.getName().equals(methodName) ) {
           if (targetMethod != null) {
-            // TODO
-            throw new RuntimeException("dup");
+            throw new RuntimeException("method duplicated : " + methodName);
           }
           targetMethod = method;
         }

@@ -27,14 +27,15 @@ public class JSON {
     return parse(str, null);
   }
 
-  public static Object parse(final String str,
-      final Class<?> rootClass) throws Exception {
+  @SuppressWarnings("unchecked")
+  public static <T> T parse(final String str,
+      final Class<T> rootClass) throws Exception {
     final DefaultJSONParserHandler handler =
         new DefaultJSONParserHandler(rootClass);
     final JSONParser in = new JSONParser(new StringReader(str), handler);
     try {
       in.parseAny();
-      return handler.getLastData();
+      return (T)handler.getLastData();
     } finally {
       in.close();
     }
