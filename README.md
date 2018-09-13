@@ -55,3 +55,9 @@ MyService=foo.MyService
     console.log(JSON.stringify(data) );
   });
 ```
+
+A result in the console.
+
+```
+{"status":"success","result":8}
+```
