@@ -16,11 +16,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * MockServer
  * @author Kazuhiko Arase
  */
 public class MockServer implements InvocationHandler {
+
+  private static final Logger logger = LoggerFactory.getLogger(MockServer.class);
 
   private static final String SERVICES = "/WEB-INF/rpc/service.properties";
 
@@ -30,6 +35,7 @@ public class MockServer implements InvocationHandler {
   private final HttpServletResponse response;
   private final HttpServlet target;
 
+  private int statusCode;
   private StringReader in = null;
   private StringWriter out = null;
   private String requestData = "";
@@ -56,7 +62,15 @@ public class MockServer implements InvocationHandler {
   }
 
   public void doService() throws Exception {
+    in = null;
+    out = null;
+    statusCode = HttpServletResponse.SC_OK;
+    logger.debug("reqData: " + requestData);
     target.service(request, response);
+    logger.debug("resData: " + getResponseData() );
+    if (statusCode != HttpServletResponse.SC_OK) {
+      throw new Exception("SC:" + statusCode);
+    }
   }
 
   public void setRequestData(String requestData) {
@@ -99,6 +113,9 @@ public class MockServer implements InvocationHandler {
       } else if (method.getName().equals("setCharacterEncoding") ) {
         return null;
       } else if (method.getName().equals("getReader") ) {
+        if (in != null) {
+          throw new RuntimeException("already got.");
+        }
         in = new StringReader(requestData);
         return new BufferedReader(in);
       } else {
@@ -108,7 +125,13 @@ public class MockServer implements InvocationHandler {
         isAssignableFrom(method.getDeclaringClass() ) ) {
       if (method.getName().equals("setContentType") ) {
         return null;
+      } else if (method.getName().equals("setStatus") ) {
+        statusCode = (Integer)args[0];
+        return null;
       } else if (method.getName().equals("getWriter") ) {
+        if (out != null) {
+          throw new RuntimeException("already got.");
+        }
         out = new StringWriter();
         return new PrintWriter(out);
       } else {

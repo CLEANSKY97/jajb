@@ -24,12 +24,34 @@ public class RPCTest {
   }
 
   @Test
-  public void testSimple() throws Exception {
+  public void test0() throws Exception {
     server.setRequestData(JSON.stringify(ObjectUtil.asList(
         ObjectUtil.asMap(
             "serviceName", "TestService",
-            "methodName", "testSimple"),
+            "methodName", "test0"),
         ObjectUtil.asList() ) ) );
+
+    server.doService();
+  }
+
+  @Test
+  public void test1() throws Exception {
+    server.setRequestData(JSON.stringify(ObjectUtil.asList(
+        ObjectUtil.asMap(
+            "serviceName", "TestService",
+            "methodName", "test1"),
+        ObjectUtil.asList(12) ) ) );
+
+    server.doService();
+  }
+
+  @Test
+  public void test2() throws Exception {
+    server.setRequestData(JSON.stringify(ObjectUtil.asList(
+        ObjectUtil.asMap(
+            "serviceName", "TestService",
+            "methodName", "test2"),
+        ObjectUtil.asList(34, 56) ) ) );
 
     server.doService();
   }

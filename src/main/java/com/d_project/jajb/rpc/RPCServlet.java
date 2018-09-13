@@ -91,7 +91,7 @@ public class RPCServlet extends HttpServlet {
       parser.parseAny();
 
       final List<Object> params = (List<Object>)handler.getLastData();
-      logger.debug("params:" + params);
+
       beforeCall(request, (Map<String,Object>)params.get(0),
           handler.getTargetMethod() );
 
@@ -99,6 +99,7 @@ public class RPCServlet extends HttpServlet {
       responseData.put(STATUS_KEY, STATUS_SUCCESS);
       responseData.put(RESULT_KEY, result);
     } catch(Exception e) {
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       responseData.put(STATUS_KEY, STATUS_FAILURE);
       responseData.put(MESSAGE_KEY, e.getMessage() );
       logger.error(e.getMessage(), e);
@@ -129,6 +130,8 @@ public class RPCServlet extends HttpServlet {
     Map<String,Object> opts,
     Method targetMethod
   ) throws Exception {
-    logger.debug("beforeCall " + opts + " - " + targetMethod);
+    if (logger.isDebugEnabled() ) {
+      logger.debug("beforeCall " + opts + " - " + targetMethod);
+    }
   }
 }

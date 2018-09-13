@@ -2,6 +2,7 @@ package com.d_project.jajb.rpc;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +16,8 @@ import com.d_project.jajb.JSONSerializable;
  */
 public class RPCHandler extends DefaultJSONParserHandler {
 
-  protected static final Integer ARG_INDEX = Integer.valueOf(1);
+  protected static final Integer OPTS_INDEX = Integer.valueOf(0);
+  protected static final Integer ARGS_INDEX = Integer.valueOf(1);
   protected static final int PARAMS_DEPTH = 1;
   protected static final int ARGS_DEPTH = PARAMS_DEPTH + 1;
 
@@ -26,51 +28,51 @@ public class RPCHandler extends DefaultJSONParserHandler {
     super();
   }
 
+  public Method getTargetMethod() {
+    return targetMethod;
+  }
+
   @SuppressWarnings("unchecked")
   public Object call() throws Exception {
+
     final List<Object> params = (List<Object>)getLastData();
-    final List<Object> args = (List<Object>)params.get(ARG_INDEX);
+    final List<Object> args = (List<Object>)params.get(ARGS_INDEX.intValue() );
+
+    // cast primitives.
+    for (int i = 0; i < args.size(); i += 1) {
+      final Class<?> clazz = targetMethod.getParameterTypes()[i];
+      args.set(i, castValue(clazz, args.get(i) ) );
+    }
+
     return targetMethod.invoke(service, args.toArray() );
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public void endArray() throws IOException {
+  public void beginArray() throws IOException {
 
-    super.endArray();
+    if (getPath().length - 1 == PARAMS_DEPTH &&
+        getPath()[PARAMS_DEPTH].equals(ARGS_INDEX.intValue() ) ) {
 
-    if (getPath().length == PARAMS_DEPTH) {
-      final List<Object> params = (List<Object>)getLastData();
-      final List<Object> args = (List<Object>)params.
-          get(ARG_INDEX.intValue() );
-      for (int i = 0; i < args.size(); i += 1) {
-        final Class<?> clazz = targetMethod.getParameterTypes()[i];
-        args.set(i, castValue(clazz, args.get(i) ) );
-      }
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  protected Method getTargetMethod() {
-    if (service == null) {
       final List<Object> params = (List<Object>)getStackObject(PARAMS_DEPTH);
-      final Map<String,Object> opts = (Map<String,Object>)params.get(0);
+      final Map<String,Object> opts =
+          (Map<String,Object>)params.get(OPTS_INDEX.intValue() );
       service = ServiceLocator.getInstance().
           getService( (String)opts.get("serviceName") );
       targetMethod = findTargetMethod(
           service, (String)opts.get("methodName") );
     }
-    return targetMethod;
+
+    super.beginArray();
   }
 
   @Override
   protected Object getTargetObject(final Class<?> targetClass) {
     final Object[] path = getPath();
-    if (path.length - 1 == ARGS_DEPTH && ARG_INDEX.equals(path[1]) ) {
-      final Method targetMethod = getTargetMethod();
+    if (path.length - 1 == ARGS_DEPTH &&
+        ARGS_INDEX.equals(path[ARGS_INDEX]) ) {
       final int paramIndex = ( (Integer)path[ARGS_DEPTH]).intValue();
-      final Class<?> paramType = targetMethod.
-          getParameterTypes()[paramIndex];
+      final Class<?> paramType = targetMethod.getParameterTypes()[paramIndex];
       if (paramType.getAnnotation(JSONSerializable.class) != null) {
         try {
           return paramType.newInstance();
