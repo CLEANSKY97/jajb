@@ -1,4 +1,4 @@
-package com.d_project.jajb;
+package com.d_project.jajb.rpc;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,10 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * JSONSerializable
+ * Callable
  * @author Kazuhiko Arase
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JSONSerializable {
+public @interface Callable {
 }

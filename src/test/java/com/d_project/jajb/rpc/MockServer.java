@@ -8,8 +8,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,19 +22,41 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MockServer implements InvocationHandler {
 
-  private Object reqProxy;
-  private Object resProxy;
+  private static final String SERVICES = "/WEB-INF/rpc/service.properties";
+
+  private final ServletConfig config;
+  private final ServletContext servletContext;
+  private final HttpServletRequest request;
+  private final HttpServletResponse response;
+  private final HttpServlet target;
 
   private StringReader in = null;
   private StringWriter out = null;
-
   private String requestData = "";
 
-  public MockServer() throws Exception {
-    reqProxy = Proxy.newProxyInstance(getClass().getClassLoader(),
+  public MockServer(final HttpServlet target) throws Exception {
+
+    config = (ServletConfig)Proxy.newProxyInstance(
+        getClass().getClassLoader(),
+        new Class[] { ServletConfig.class }, this);
+    servletContext = (ServletContext)Proxy.newProxyInstance(
+        getClass().getClassLoader(),
+        new Class[] { ServletContext.class }, this);
+
+    request = (HttpServletRequest)Proxy.newProxyInstance(
+        getClass().getClassLoader(),
         new Class[] { HttpServletRequest.class }, this);
-    resProxy = Proxy.newProxyInstance(getClass().getClassLoader(),
+    response = (HttpServletResponse)Proxy.newProxyInstance(
+        getClass().getClassLoader(),
         new Class[] { HttpServletResponse.class }, this);
+
+    target.init(config);
+
+    this.target = target;
+  }
+
+  public void doService() throws Exception {
+    target.service(request, response);
   }
 
   public void setRequestData(String requestData) {
@@ -45,7 +70,29 @@ public class MockServer implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args)
       throws Throwable {
-    if (ServletRequest.class.
+    if (ServletConfig.class.
+        isAssignableFrom(method.getDeclaringClass() ) ) {
+      if (method.getName().equals("getInitParameter") ) {
+        if (!"services".equals(args[0]) ) {
+          throw new Exception( (String)args[0]);
+        }
+        return SERVICES;
+      } else if (method.getName().equals("getServletContext") ) {
+          return servletContext;
+      } else {
+        throw new RuntimeException("not implemented:" + method.getName() );
+      }
+    } else if (ServletContext.class.
+        isAssignableFrom(method.getDeclaringClass() ) ) {
+      if (method.getName().equals("getResourceAsStream") ) {
+        if (!SERVICES.equals(args[0]) ) {
+          throw new Exception( (String)args[0]);
+        }
+        return getClass().getResourceAsStream("services.properties");
+      } else {
+        throw new RuntimeException("not implemented:" + method.getName() );
+      }
+    } else if (ServletRequest.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
       if (method.getName().equals("getMethod") ) {
         return "POST";
@@ -74,14 +121,7 @@ public class MockServer implements InvocationHandler {
         throw new RuntimeException("not implemented:" + method.getName() );
       }
     } else {
-      return method.invoke(MockServer.this);
+      return method.invoke(this);
     }
-  }
-
-  public HttpServletRequest getRequest() {
-    return (HttpServletRequest)reqProxy;
-  }
-  public HttpServletResponse getResponse() {
-    return (HttpServletResponse)resProxy;
   }
 }
