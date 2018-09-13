@@ -17,7 +17,7 @@ public class MyService {
 }
 ```
 
-2. Setup RPCServlet.
+2. Setup a RPCServlet.
 
 /WEB-INF/web.xml
 ```xml
