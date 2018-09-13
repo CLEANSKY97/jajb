@@ -30,7 +30,7 @@ public class RPCServlet extends HttpServlet {
 
   private static final String STATUS_KEY = "status";
   private static final String STATUS_SUCCESS = "success";
-  private static final String STATUS_FAILURE = "failule";
+  private static final String STATUS_FAILURE = "failure";
 
   private static final String RESULT_KEY = "result";
   private static final String MESSAGE_KEY = "message";
@@ -40,6 +40,7 @@ public class RPCServlet extends HttpServlet {
 
   @Override
   public void init(final ServletConfig config) throws ServletException {
+
     super.init(config);
 
     try {
@@ -51,8 +52,7 @@ public class RPCServlet extends HttpServlet {
     }
   }
 
-  protected void loadServices(
-      final ServletConfig config) throws Exception {
+  protected void loadServices(final ServletConfig config) throws Exception {
     final String path = config.getInitParameter("services");
     logger.debug("loading services from " + path);
     final Properties services = new Properties();
@@ -126,9 +126,9 @@ public class RPCServlet extends HttpServlet {
    * @param targetMethod
    */
   protected void beforeCall(
-    HttpServletRequest request,
-    Map<String,Object> opts,
-    Method targetMethod
+      final HttpServletRequest request,
+    final Map<String,Object> opts,
+    final Method targetMethod
   ) throws Exception {
     if (logger.isDebugEnabled() ) {
       logger.debug("beforeCall " + opts + " - " + targetMethod);

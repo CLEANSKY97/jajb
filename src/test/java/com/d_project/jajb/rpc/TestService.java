@@ -5,8 +5,8 @@ import com.d_project.jajb.TestVO;
 public class TestService {
 
   @Callable
-  public String[] test0() {
-    return new String[] { "a", "b" };
+  public void test0() {
+    // no args, no return.
   }
 
   @Callable
@@ -15,8 +15,8 @@ public class TestService {
   }
 
   @Callable
-  public String[] test2(int a, int b) {
-    return new String[] { "a", "b" };
+  public Object[] test2(int a, int b) {
+    return new Object[] { "a", 1 };
   }
 
   @Callable
