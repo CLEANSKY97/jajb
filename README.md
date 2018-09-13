@@ -2,6 +2,7 @@ JAJB
 ===
 Java Architecture for JSON Binding
 
+## First step
 
 1. Create POJO Service.
 
@@ -56,8 +57,35 @@ MyService=foo.MyService
   });
 ```
 
-A result in the console.
+## With POJO VO (Value Object)
 
+```java
+package foo;
+
+import com.d_project.jajb.JSONSerializable;
+
+@JSONSerializable
+public class MyVO {
+
+  @JSONSerializable
+  private String message;
+  public String getMessage() { return message; }
+  public void setMessage(String message) { this.message = message; }
+
+  // This property will not serialize.
+  private int iamPrivate;
+  public int getIamPrivate() { return iamPrivate; }
+  public void setIamPrivate(int iamPrivate) { this.iamPrivate = iamPrivate; }
+}
 ```
-{"status":"success","result":8}
+
+```java
+package foo;
+
+import com.d_project.jajb.rpc.Callable;
+
+public class MyVOService {
+  @Callable
+  public MyVO helloVO(MyVO vo) { return vo; }
+}
 ```
