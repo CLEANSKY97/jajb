@@ -117,7 +117,7 @@ public class MyVOService {
 Here is a result.
 
 ```
-{"status":"success","result":{"message":"hello,abc"}}```
+{"status":"success","result":{"message":"hello,abc"}}
 ```
 
 
