@@ -99,9 +99,6 @@ public class MockServer implements InvocationHandler {
       } else if (method.getName().equals("setCharacterEncoding") ) {
         return null;
       } else if (method.getName().equals("getReader") ) {
-        if (in != null) {
-          throw new RuntimeException("already got.");
-        }
         in = new StringReader(requestData);
         return new BufferedReader(in);
       } else {
@@ -112,9 +109,6 @@ public class MockServer implements InvocationHandler {
       if (method.getName().equals("setContentType") ) {
         return null;
       } else if (method.getName().equals("getWriter") ) {
-        if (out != null) {
-          throw new RuntimeException("already got.");
-        }
         out = new StringWriter();
         return new PrintWriter(out);
       } else {

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.d_project.jajb.JSON;
@@ -15,17 +16,28 @@ import com.d_project.jajb.TestVO3;
 
 public class RPCTest {
 
-  protected MockServer server;
+  protected static MockServer server;
 
-  @Before
-  public void prepare() throws Exception {
+  @BeforeClass
+  public static void prepare() throws Exception {
     server = new MockServer(new RPCServlet() );
   }
 
   @Test
-  public void test() throws Exception {
+  public void testSimple() throws Exception {
+    server.setRequestData(JSON.stringify(ObjectUtil.asList(
+        ObjectUtil.asMap(
+            "serviceName", "TestService",
+            "methodName", "testSimple"),
+        ObjectUtil.asList() ) ) );
 
-    TestVO reqVO = new TestVO();
+    server.doService();
+  }
+
+  @Test
+  public void testMixed() throws Exception {
+
+    final TestVO reqVO = new TestVO();
     reqVO.setGroup(new TestVO2() );
     reqVO.setItems(Arrays.asList(new TestVO3(), new TestVO3() ) );
 
@@ -39,12 +51,12 @@ public class RPCTest {
     server.setRequestData(JSON.stringify(ObjectUtil.asList(
         ObjectUtil.asMap(
             "serviceName", "TestService",
-            "methodName", "test"),
+            "methodName", "testMixed"),
         ObjectUtil.asList(1, 2, reqVO) ) ) );
 
     server.doService();
 
-    ResVO resVO = JSON.parse(server.getResponseData(), ResVO.class);
+    final ResVO resVO = JSON.parse(server.getResponseData(), ResVO.class);
     Assert.assertEquals("success", resVO.getStatus() );
     Assert.assertEquals(6, resVO.getResult().getNum() );
     Assert.assertEquals("one", resVO.getResult().getGroup().getS1() );

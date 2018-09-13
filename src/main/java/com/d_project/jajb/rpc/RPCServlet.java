@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -72,6 +73,7 @@ public class RPCServlet extends HttpServlet {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected void doPost(
     final HttpServletRequest request,
     final HttpServletResponse response
@@ -87,7 +89,12 @@ public class RPCServlet extends HttpServlet {
 
     try {
       parser.parseAny();
-      beforeCall(request, handler.getTargetMethod() );
+
+      final List<Object> params = (List<Object>)handler.getLastData();
+      logger.debug("params:" + params);
+      beforeCall(request, (Map<String,Object>)params.get(0),
+          handler.getTargetMethod() );
+
       final Object result = handler.call();
       responseData.put(STATUS_KEY, STATUS_SUCCESS);
       responseData.put(RESULT_KEY, result);
@@ -118,7 +125,10 @@ public class RPCServlet extends HttpServlet {
    * @param targetMethod
    */
   protected void beforeCall(
-      HttpServletRequest request, Method targetMethod) throws Exception {
-    logger.debug("beforeCall " + targetMethod);
+    HttpServletRequest request,
+    Map<String,Object> opts,
+    Method targetMethod
+  ) throws Exception {
+    logger.debug("beforeCall " + opts + " - " + targetMethod);
   }
 }
