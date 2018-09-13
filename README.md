@@ -72,7 +72,7 @@ public class MyVO {
   public String getMessage() { return message; }
   public void setMessage(String message) { this.message = message; }
 
-  // This property will not serialize.
+  // This property will not be serialized.
   private int iamPrivate;
   public int getIamPrivate() { return iamPrivate; }
   public void setIamPrivate(int iamPrivate) { this.iamPrivate = iamPrivate; }
