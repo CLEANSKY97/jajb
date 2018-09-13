@@ -57,6 +57,12 @@ MyService=foo.MyService
   });
 ```
 
+Here is a result.
+
+```
+{"status":"success","result":8}
+```
+
 ## With POJO VO (Value Object)
 
 ```java
@@ -86,6 +92,32 @@ import com.d_project.jajb.rpc.Callable;
 
 public class MyVOService {
   @Callable
-  public MyVO helloVO(MyVO vo) { return vo; }
+  public MyVO helloVO(MyVO vo) {
+    vo.setMessage("hello," + vo.getMessage() );
+    vo.setIamPrivate(123);
+    return vo;
+  }
 }
 ```
+
+```javascript
+  $.ajax({
+    url : 'jajb-rpc',
+    method : 'POST',
+    type : 'application/json',
+    data : JSON.stringify([
+      { serviceName : 'MyVOService', methodName : 'helloVO' }, // opts
+      [ { message : 'abc', iamPrivate : 'secret' } ] // args
+    ])
+  }).done(function(data) {
+    console.log(JSON.stringify(data) );
+  });
+```
+
+Here is a result.
+
+```
+{"status":"success","result":{"message":"hello,abc"}}```
+```
+
+
