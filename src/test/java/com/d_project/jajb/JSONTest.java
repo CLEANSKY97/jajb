@@ -2,12 +2,16 @@ package com.d_project.jajb;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JSONTest
  * @author Kazuhiko Arase
  */
 public class JSONTest {
+
+  protected final Logger logger = LoggerFactory.getLogger(getClass() );
 
   protected interface ObjectHandler {
     Object handle(Object obj);
@@ -123,6 +127,8 @@ public class JSONTest {
         Assert.assertEquals("1", vo.getStr() );
         Assert.assertEquals(1, vo.getNum() );
         Assert.assertNotNull(vo.getGroup() );
+        Assert.assertEquals("a", vo.getGroup().getS1() );
+        Assert.assertEquals("b", vo.getGroup().getS2() );
         Assert.assertNotNull(vo.getItems() );
         Assert.assertEquals(2, vo.getItems().size() );
         Assert.assertEquals("@", vo.getItems().get(0).getF1() );

@@ -18,20 +18,18 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   private final Stack<StackData> stack = new Stack<StackData>();
 
-  private Class<?> targetClass;
-
   public DefaultJSONParserHandler() {
     this(null);
   }
 
   public DefaultJSONParserHandler(final Class<?> rootClass) {
-    stack.push(new StackData(null) );
-    this.targetClass = rootClass;
+    stack.push(new StackData(null, rootClass) );
   }
 
   @Override
   public void beginArray() throws IOException {
-    stack.push(new StackData(new ArrayList<Object>() ) );
+    stack.push(new StackData(
+        new ArrayList<Object>(), stack.peek().targetClass) );
   }
 
   @Override
@@ -66,7 +64,8 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   @Override
   public void beginObject() throws IOException {
-    stack.push(new StackData(getTargetObject(targetClass) ) );
+    stack.push(new StackData(
+        getTargetObject(stack.peek().targetClass), null) );
   }
 
   @Override
@@ -94,7 +93,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
         objData.name = (String)data;
         final FieldInfo fieldInfo = MetadataCache.getMetadata(
             target.getClass() ).getFieldInfo(objData.name);
-        targetClass = fieldInfo == null? null :
+        objData.targetClass = fieldInfo == null? null :
             fieldInfo.getIterableType() != null?
             fieldInfo.getIterableType() : fieldInfo.getType();
       }
@@ -194,11 +193,13 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   protected static class StackData {
     public final Object target;
+    public Class<?> targetClass;
     public String name = null;
     public Object lastData = null;
     public int dataIndex = 0;
-    public StackData(Object target) {
+    public StackData(Object target, Class<?> targetClass) {
       this.target = target;
+      this.targetClass = targetClass;
     }
   }
 
