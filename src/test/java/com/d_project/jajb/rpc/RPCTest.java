@@ -46,6 +46,17 @@ public class RPCTest {
   }
 
   @Test
+  public void echo() throws Exception {
+    server.setRequestData(JSON.stringify(ObjectUtil.asList(
+        ObjectUtil.asMap(
+            "serviceName", "TestService",
+            "methodName", "echo"),
+        ObjectUtil.asList("hello!") ) ) );
+
+    server.doService();
+  }
+
+  @Test
   public void test2() throws Exception {
     server.setRequestData(JSON.stringify(ObjectUtil.asList(
         ObjectUtil.asMap(

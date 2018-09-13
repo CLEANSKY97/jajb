@@ -15,6 +15,11 @@ public class TestService {
   }
 
   @Callable
+  public String echo(String a) {
+    return a;
+  }
+
+  @Callable
   public Object[] test2(int a, int b) {
     return new Object[] { "a", 1 };
   }

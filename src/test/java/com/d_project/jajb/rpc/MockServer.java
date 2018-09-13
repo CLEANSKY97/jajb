@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
  */
 public class MockServer implements InvocationHandler {
 
-  private static final Logger logger = LoggerFactory.getLogger(MockServer.class);
-
   private static final String SERVICES = "/WEB-INF/rpc/service.properties";
+
+  protected static final Logger logger = LoggerFactory.getLogger(MockServer.class);
 
   private final ServletConfig config;
   private final ServletContext servletContext;
@@ -114,7 +114,7 @@ public class MockServer implements InvocationHandler {
         return null;
       } else if (method.getName().equals("getReader") ) {
         if (in != null) {
-          throw new RuntimeException("already got.");
+          throw new RuntimeException("already called.");
         }
         in = new StringReader(requestData);
         return new BufferedReader(in);
@@ -130,7 +130,7 @@ public class MockServer implements InvocationHandler {
         return null;
       } else if (method.getName().equals("getWriter") ) {
         if (out != null) {
-          throw new RuntimeException("already got.");
+          throw new RuntimeException("already called.");
         }
         out = new StringWriter();
         return new PrintWriter(out);
