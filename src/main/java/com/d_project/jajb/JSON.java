@@ -23,12 +23,26 @@ public class JSON {
     return sout.toString();
   }
 
+  /**
+   * parse JSON string into object.
+   * @param str JSON string
+   * @return
+   * @throws Exception
+   */
   public static Object parse(final String str) throws Exception {
     return parse(str, null);
   }
 
+  /**
+   * parse JSON string into specified class.
+   * @param str JSON string
+   * @param rootClass
+   * @return
+   * @throws Exception
+   */
   @SuppressWarnings("unchecked")
-  public static <T> T parse(final String str,
+  public static <T> T parse(
+      final String str,
       final Class<T> rootClass) throws Exception {
     final DefaultJSONParserHandler handler =
         new DefaultJSONParserHandler(rootClass);

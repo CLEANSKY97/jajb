@@ -1,7 +1,9 @@
 package com.d_project.jajb.rpc;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,9 +16,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 import com.d_project.jajb.JSONParser;
 import com.d_project.jajb.JSONWriter;
@@ -98,13 +107,61 @@ public class RPCServlet extends HttpServlet {
       final Object result = handler.call();
       responseData.put(STATUS_KEY, STATUS_SUCCESS);
       responseData.put(RESULT_KEY, result);
+
     } catch(Exception e) {
+
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       responseData.put(STATUS_KEY, STATUS_FAILURE);
       responseData.put(MESSAGE_KEY, e.getMessage() );
       logger.error(e.getMessage(), e);
+
     } finally {
       parser.close();
+    }
+
+    if (responseData.get(STATUS_KEY).equals(STATUS_SUCCESS) &&
+        responseData.get(RESULT_KEY) instanceof Node) {
+
+      // raw xml
+      response.setContentType("application/xml;charset=UTF-8");
+      final OutputStream out = new BufferedOutputStream(
+          response.getOutputStream() );
+      try {
+        final Transformer tf = TransformerFactory.
+            newInstance().newTransformer();
+        tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        tf.transform(
+            new DOMSource( (Node)responseData.get(RESULT_KEY) ),
+            new StreamResult(out) );
+      } catch(TransformerException e) {
+        throw new IOException(e);
+      } finally {
+        out.close();
+      }
+      return;
+
+    } else if (responseData.get(STATUS_KEY).equals(STATUS_SUCCESS) &&
+        responseData.get(RESULT_KEY) instanceof InputStream) {
+
+      // raw stream
+      response.setContentType("application/octet-stream");
+      final OutputStream out = new BufferedOutputStream(
+          response.getOutputStream() );
+      try {
+        final InputStream in = (InputStream)responseData.get(RESULT_KEY);
+        try {
+          final byte[] buf = new byte[8192];
+          int len;
+          while ( (len = in.read(buf) ) != -1) {
+            out.write(buf, 0, len);
+          }
+        } finally {
+          in.close();
+        }
+      } finally {
+        out.close();
+      }
+      return;
     }
 
     response.setContentType("application/json;charset=UTF-8");
