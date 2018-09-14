@@ -102,7 +102,7 @@ public class MockServer implements InvocationHandler {
         if (!SERVICES.equals(args[0]) ) {
           throw new Exception( (String)args[0]);
         }
-        return getClass().getResourceAsStream("services.properties");
+        return getClass().getResourceAsStream("/services.properties");
       } else {
         throw new RuntimeException("not implemented:" + method.getName() );
       }
