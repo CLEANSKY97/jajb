@@ -61,7 +61,7 @@ MyService=foo.MyService
 
 Here is a result.
 
-```
+```json
 {"status":"success","result":8}
 ```
 
@@ -122,6 +122,6 @@ public class MyVOService {
 
 Here is a result.
 
-```
+```json
 {"status":"success","result":{"message":"hello,abc,null"}}
 ```
