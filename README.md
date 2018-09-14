@@ -1,4 +1,4 @@
-JAJB
+.JAJB
 ===
 Java Architecture for JSON Binding
 
@@ -43,7 +43,7 @@ public class MyService {
 MyService=foo.MyService
 ```
 
-3. Call from a client(with jQuery).
+3. Call from a client (with jQuery).
 
 ```javascript
   $.ajax({
@@ -81,10 +81,13 @@ public class MyVO {
   public void setMessage(String message) { this.message = message; }
 
   // This property will not be serialized.
-  private int iamPrivate;
-  public int getIamPrivate() { return iamPrivate; }
-  public void setIamPrivate(int iamPrivate) { this.iamPrivate = iamPrivate; }
+  private String notSerializable;
+  public String getNotSerializable() { return notSerializable; }
+  public void setNotSerializable(String notSerializable) {
+    this.notSerializable = notSerializable;
+  }
 }
+
 ```
 
 ```java
@@ -95,8 +98,9 @@ import com.d_project.jajb.rpc.Callable;
 public class MyVOService {
   @Callable
   public MyVO helloVO(MyVO vo) {
-    vo.setMessage("hello," + vo.getMessage() );
-    vo.setIamPrivate(123);
+    vo.setMessage("hello," + vo.getMessage() +
+        "," + vo.getNotSerializable() );
+    vo.setNotSerializable("Can you hear me?");
     return vo;
   }
 }
@@ -109,7 +113,7 @@ public class MyVOService {
     type : 'application/json',
     data : JSON.stringify([
       { serviceName : 'MyVOService', methodName : 'helloVO' }, // opts
-      [ { message : 'abc', iamPrivate : 'secret' } ] // args
+      [ { message : 'abc', notSerializable : 'will be ignored' } ] // args
     ])
   }).done(function(data) {
     console.log(JSON.stringify(data) );
@@ -119,5 +123,5 @@ public class MyVOService {
 Here is a result.
 
 ```
-{"status":"success","result":{"message":"hello,abc"}}
+{"status":"success","result":{"message":"hello,abc,null"}}
 ```
