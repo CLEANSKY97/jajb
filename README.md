@@ -6,7 +6,7 @@ JAJB provides the simplest, shortest way to call the server side java api from t
 
 ## First step
 
-1. Create POJO Service.
+1. Create a POJO Service.
 
 ```java
 package foo;
@@ -43,7 +43,7 @@ public class MyService {
 MyService=foo.MyService
 ```
 
-3. Call from client.
+3. Call from a client(with jQuery).
 
 ```javascript
   $.ajax({
@@ -121,5 +121,3 @@ Here is a result.
 ```
 {"status":"success","result":{"message":"hello,abc"}}
 ```
-
-
