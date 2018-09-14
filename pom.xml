@@ -32,6 +32,14 @@
     <url>https://github.com/kazuhikoarase/jajb/tree/master</url>
   </scm>
 
+  <distributionManagement>
+    <site>
+      <id>github-project-site</id>
+      <name>GitHub Project Pages</name>
+      <url>gitsite:git@github.com/kazuhikoarase/jajb.git</url>
+    </site>
+  </distributionManagement>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
