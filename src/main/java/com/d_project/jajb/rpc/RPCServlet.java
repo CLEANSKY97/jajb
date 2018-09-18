@@ -127,13 +127,16 @@ public class RPCServlet extends HttpServlet {
       if (securityHandler.isAuthorized(request,
           (Map<String,Object>)params.get(0),
           handler.getTargetMethod() ) ) {
+
         final Object result = handler.call();
         responseData.put(STATUS_KEY, STATUS_SUCCESS);
         responseData.put(RESULT_KEY, result);
+
       } else {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         responseData.put(STATUS_KEY, STATUS_FAILURE);
-        responseData.put(MESSAGE_KEY, "unauthorized");
+        responseData.put(MESSAGE_KEY, "forbidden");
       }
 
     } catch(Exception e) {
