@@ -141,10 +141,11 @@ public class RPCServlet extends HttpServlet {
 
     } catch(Exception e) {
 
+      logger.error(e.getMessage(), e);
+
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       responseData.put(STATUS_KEY, STATUS_FAILURE);
       responseData.put(MESSAGE_KEY, e.getMessage() );
-      logger.error(e.getMessage(), e);
 
     } finally {
       parser.close();
