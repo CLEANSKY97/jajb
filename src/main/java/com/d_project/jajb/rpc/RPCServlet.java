@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,10 @@ import com.d_project.jajb.JSONWriter;
 @SuppressWarnings("serial")
 public class RPCServlet extends HttpServlet {
 
+  private static final String SECURITY_HANDLER_KEY = "security-handler";
+  private static final String DEFAULT_SECURITY_HANDLER_CLASS =
+      "com.d_project.jajb.rpc.DefaultSecurityHandler";
+
   private static final String STATUS_KEY = "status";
   private static final String STATUS_SUCCESS = "success";
   private static final String STATUS_FAILURE = "failure";
@@ -47,18 +50,37 @@ public class RPCServlet extends HttpServlet {
   protected static final Logger logger =
       LoggerFactory.getLogger(RPCServlet.class);
 
+  private SecurityHandler securityHandler;
+
   @Override
   public void init(final ServletConfig config) throws ServletException {
 
     super.init(config);
 
     try {
+
+      initSecurityHandler(config);
+
       loadServices(config);
+
     } catch(RuntimeException e) {
+      throw e;
+    } catch(ServletException e) {
       throw e;
     } catch(Exception e) {
       throw new ServletException(e);
     }
+  }
+
+  protected void initSecurityHandler(
+      final ServletConfig config) throws Exception {
+    final String securityHandlerClass =
+        config.getInitParameter(SECURITY_HANDLER_KEY);
+    securityHandler = (SecurityHandler)Class.forName(
+        securityHandlerClass != null?
+            securityHandlerClass : DEFAULT_SECURITY_HANDLER_CLASS).
+        newInstance();
+    securityHandler.init(config);
   }
 
   protected void loadServices(final ServletConfig config) throws Exception {
@@ -97,16 +119,22 @@ public class RPCServlet extends HttpServlet {
     final JSONParser parser = new JSONParser(request.getReader(), handler);
 
     try {
+
       parser.parseAny();
 
       final List<Object> params = (List<Object>)handler.getLastData();
 
-      beforeCall(request, (Map<String,Object>)params.get(0),
-          handler.getTargetMethod() );
-
-      final Object result = handler.call();
-      responseData.put(STATUS_KEY, STATUS_SUCCESS);
-      responseData.put(RESULT_KEY, result);
+      if (securityHandler.isAuthorized(request,
+          (Map<String,Object>)params.get(0),
+          handler.getTargetMethod() ) ) {
+        final Object result = handler.call();
+        responseData.put(STATUS_KEY, STATUS_SUCCESS);
+        responseData.put(RESULT_KEY, result);
+      } else {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        responseData.put(STATUS_KEY, STATUS_FAILURE);
+        responseData.put(MESSAGE_KEY, "unauthorized");
+      }
 
     } catch(Exception e) {
 
@@ -175,20 +203,5 @@ public class RPCServlet extends HttpServlet {
 
   protected RPCHandler createHandler() {
     return new RPCHandler();
-  }
-
-  /**
-   * Override this method to security check.
-   * @param request
-   * @param targetMethod
-   */
-  protected void beforeCall(
-      final HttpServletRequest request,
-    final Map<String,Object> opts,
-    final Method targetMethod
-  ) throws Exception {
-    if (logger.isDebugEnabled() ) {
-      logger.debug("beforeCall " + opts + " - " + targetMethod);
-    }
   }
 }

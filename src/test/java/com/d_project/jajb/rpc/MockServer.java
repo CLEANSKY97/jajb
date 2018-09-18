@@ -84,18 +84,23 @@ public class MockServer implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args)
       throws Throwable {
+
     if (ServletConfig.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
       if (method.getName().equals("getInitParameter") ) {
-        if (!"services".equals(args[0]) ) {
+        if ("services".equals(args[0]) ) {
+          return SERVICES;
+        } else if ("security-handler".equals(args[0]) ) {
+          return null;
+        } else {
           throw new Exception( (String)args[0]);
         }
-        return SERVICES;
       } else if (method.getName().equals("getServletContext") ) {
           return servletContext;
       } else {
         throw new RuntimeException("not implemented:" + method.getName() );
       }
+
     } else if (ServletContext.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
       if (method.getName().equals("getResourceAsStream") ) {
@@ -106,6 +111,7 @@ public class MockServer implements InvocationHandler {
       } else {
         throw new RuntimeException("not implemented:" + method.getName() );
       }
+
     } else if (ServletRequest.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
       if (method.getName().equals("getMethod") ) {
@@ -121,6 +127,7 @@ public class MockServer implements InvocationHandler {
       } else {
         throw new RuntimeException("not implemented:" + method.getName() );
       }
+
     } else if (ServletResponse.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
       if (method.getName().equals("setContentType") ) {
@@ -137,6 +144,7 @@ public class MockServer implements InvocationHandler {
       } else {
         throw new RuntimeException("not implemented:" + method.getName() );
       }
+
     } else {
       return method.invoke(this);
     }
