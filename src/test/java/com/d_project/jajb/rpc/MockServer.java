@@ -92,6 +92,8 @@ public class MockServer implements InvocationHandler {
           return SERVICES;
         } else if ("security-handler".equals(args[0]) ) {
           return null;
+        } else if ("application-exceptions".equals(args[0]) ) {
+          return null;
         } else {
           throw new Exception( (String)args[0]);
         }

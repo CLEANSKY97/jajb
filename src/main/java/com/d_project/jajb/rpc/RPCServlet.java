@@ -4,11 +4,14 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -38,7 +41,9 @@ public class RPCServlet extends HttpServlet {
 
   private static final String SECURITY_HANDLER_KEY = "security-handler";
   private static final String DEFAULT_SECURITY_HANDLER_CLASS =
-      "com.d_project.jajb.rpc.DefaultSecurityHandler";
+      com.d_project.jajb.rpc.DefaultSecurityHandler.class.getName();
+  private static final String APPLICATION_EXCEPTIONS_KEY =
+      "application-exceptions";
 
   private static final String STATUS_KEY = "status";
   private static final String STATUS_SUCCESS = "success";
@@ -50,6 +55,8 @@ public class RPCServlet extends HttpServlet {
   protected static final Logger logger =
       LoggerFactory.getLogger(RPCServlet.class);
 
+  private Set<Class<?>> applicationExceptions;
+
   private SecurityHandler securityHandler;
 
   @Override
@@ -58,6 +65,8 @@ public class RPCServlet extends HttpServlet {
     super.init(config);
 
     try {
+
+      parseApplicationExceptions(config);
 
       initSecurityHandler(config);
 
@@ -69,6 +78,20 @@ public class RPCServlet extends HttpServlet {
       throw e;
     } catch(Exception e) {
       throw new ServletException(e);
+    }
+  }
+
+  protected void parseApplicationExceptions(
+      final ServletConfig config) throws Exception {
+    applicationExceptions = new HashSet<Class<?>>();
+    final String appExceptions = config.
+        getInitParameter(APPLICATION_EXCEPTIONS_KEY);
+    if (appExceptions != null) {
+      for (final String className : appExceptions.split("\\s+") ) {
+        if (className.length() > 0) {
+          applicationExceptions.add(Class.forName(className) );
+        }
+      }
     }
   }
 
@@ -141,11 +164,34 @@ public class RPCServlet extends HttpServlet {
 
     } catch(Exception e) {
 
-      logger.error(e.getMessage(), e);
+      // extract InvocationTargetException.
+      if (e instanceof InvocationTargetException) {
+        final Throwable t = ( (InvocationTargetException)e).
+            getTargetException();
+        if (t instanceof Exception) {
+          e = (Exception)t;
+        }
+      }
 
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      responseData.put(STATUS_KEY, STATUS_FAILURE);
-      responseData.put(MESSAGE_KEY, e.getMessage() );
+      if (isApplicationException(e) ) {
+
+        // application exception returns message with normal state(200 OK)
+
+        if (logger.isDebugEnabled() ) {
+          logger.error(e.getMessage(), e);
+        }
+
+        responseData.put(STATUS_KEY, STATUS_FAILURE);
+        responseData.put(MESSAGE_KEY, e.getMessage() );
+
+      } else {
+
+        logger.error(e.getMessage(), e);
+
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        responseData.put(STATUS_KEY, STATUS_FAILURE);
+        responseData.put(MESSAGE_KEY, e.getMessage() );
+      }
 
     } finally {
       parser.close();
@@ -205,7 +251,17 @@ public class RPCServlet extends HttpServlet {
     }
   }
 
+  protected boolean isApplicationException(final Exception e) {
+    for (final Class<?> c : applicationExceptions) {
+      if (c.isAssignableFrom(e.getClass() ) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   protected RPCHandler createHandler() {
+    
     return new RPCHandler();
   }
 }
