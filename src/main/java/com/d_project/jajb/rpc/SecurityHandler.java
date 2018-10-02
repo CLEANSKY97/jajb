@@ -23,8 +23,8 @@ public interface SecurityHandler {
   /**
    * return true if authorized.
    * @param request
-   * @param opts
-   * @param targetMethod
+   * @param opts options that parsed from request data.
+   * @param targetMethod target method to invoke.
    * @return
    * @throws ServletException
    */

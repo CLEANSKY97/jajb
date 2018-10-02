@@ -11,6 +11,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface ResultHandler {
 
+  /**
+   * Handle a result and write output to the response.
+   * @param response
+   * @throws ServletException
+   * @throws IOException
+   */
   void handle(HttpServletResponse response)
       throws ServletException, IOException;
 
