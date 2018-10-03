@@ -2,7 +2,7 @@ package com.d_project.jajb;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -116,9 +116,10 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
   protected static Object castValue(
       final Class<?> clazz, final Object value) {
-    if (value instanceof BigDecimal) {
 
-      final BigDecimal dec = (BigDecimal)value;
+    if (value instanceof Number) {
+
+      final Number dec = (Number)value;
 
       if (clazz.equals(Integer.TYPE) ) {
         return dec.intValue();
@@ -149,6 +150,9 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
         return dec.doubleValue();
       } else if (clazz.equals(Double.class) ) {
         return dec.doubleValue();
+
+      } else if (BigInteger.class.isAssignableFrom(clazz) ) {
+        return BigInteger.valueOf(dec.longValue() );
 
       } else {
         return value;
@@ -184,7 +188,10 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
   }
 
   public Object getLastData() {
-    return stack.peek().lastData;
+    final StackData lastStack = stack.peek();
+    return lastStack.targetClass != null?
+        castValue(lastStack.targetClass, lastStack.lastData) :
+          lastStack.lastData;
   }
 
   public Object getStackObject(int depth) {

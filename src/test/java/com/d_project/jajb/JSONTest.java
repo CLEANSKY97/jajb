@@ -1,5 +1,8 @@
 package com.d_project.jajb;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -160,4 +163,37 @@ public class JSONTest {
       }
     });
   }
+
+  @Test
+  public void testPOJO5() throws Exception {
+    Assert.assertEquals("[1,2]",JSON.stringify(new byte[] {1,2}) );
+    Assert.assertEquals("[1,2]",JSON.stringify(new short[] {1,2}) );
+    Assert.assertEquals("[1,2]",JSON.stringify(new int[] {1,2}) );
+    Assert.assertEquals("[1,2]",JSON.stringify(new long[] {1,2}) );
+    Assert.assertEquals("[1.0,2.0]",JSON.stringify(new float[] {1,2}) );
+    Assert.assertEquals("[1.0,2.0]",JSON.stringify(new double[] {1,2}) );
+  }
+
+  @Test
+  public void testPOJO6() throws Exception {
+    Assert.assertArrayEquals(new byte[] {1,2},
+        JSON.parse("[1,2]", byte[].class) );
+    Assert.assertArrayEquals(new int[] {1,2},
+        JSON.parse("[1,2]", int[].class) );
+    Assert.assertArrayEquals(new int[] {1,2},
+        JSON.parse("[1,2]", int[].class) );
+    Assert.assertArrayEquals(new long[] {1,2},
+        JSON.parse("[1,2]", long[].class) );
+    Assert.assertArrayEquals(new float[] {1.0f,2},
+        JSON.parse("[1,2]", float[].class), 0);
+    Assert.assertArrayEquals(new double[] {1,2.0},
+        JSON.parse("[1,2]", double[].class), 0);
+    Assert.assertArrayEquals(new BigInteger[] {
+        BigInteger.valueOf(1), BigInteger.valueOf(2)},
+        JSON.parse("[1,2]", BigInteger[].class) );
+    Assert.assertArrayEquals(new BigDecimal[] {
+        BigDecimal.valueOf(1), BigDecimal.valueOf(2)},
+        JSON.parse("[1,2]", BigDecimal[].class) );
+  }
+
 }
