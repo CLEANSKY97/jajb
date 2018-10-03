@@ -20,14 +20,14 @@ public class TestService {
   }
 
   @Callable
-  public long[] testSwap(int[] a) {
-    // array in, array out
-    return new long[] { a[1], a[0] };
+  public Object[] test2(int a, int b) {
+    return new Object[] { "a", 1 };
   }
 
   @Callable
-  public Object[] test2(int a, int b) {
-    return new Object[] { "a", 1 };
+  public long[] testSwap(int[] a) {
+    // array in, array out
+    return new long[] { a[1], a[0] };
   }
 
   @Callable
@@ -36,4 +36,3 @@ public class TestService {
     return vo;
   }
 }
-
