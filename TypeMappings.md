@@ -27,9 +27,9 @@
 
 ### JSON to Java (with auto cast by reflection)
 
-| JSON Type              | Java Type                   |
-| ---------------------- | --------------------------- |
-| Number                 | Primitive Number Types      |
-| Array                  | Array, java.util.ArrayList  |
-| Object                 | POJO Object                 |
+| JSON Type              | Java Type                                    |
+| ---------------------- | -------------------------------------------- |
+| Number                 | Primitive Number Types, java.math.BigInteger |
+| Array                  | Array, java.util.ArrayList                   |
+| Object                 | POJO Object                                  |
 
