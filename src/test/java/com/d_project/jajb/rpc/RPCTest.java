@@ -67,6 +67,21 @@ public class RPCTest {
   }
 
   @Test
+  public void testSwap() throws Exception {
+
+    server.setRequestData(JSON.stringify(ObjectUtil.asList(
+        ObjectUtil.asMap(
+            "serviceName", "TestService",
+            "methodName", "testSwap"),
+        ObjectUtil.asList(new int[] {1, 2}) ) ) );
+
+    server.doService();
+
+    Assert.assertEquals("{\"status\":\"success\",\"result\":[2,1]}",
+        server.getResponseData() ); 
+ }
+
+  @Test
   public void testMixed() throws Exception {
 
     final TestVO reqVO = new TestVO();
