@@ -1,6 +1,9 @@
 package com.d_project.jajb.rpc;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -10,6 +13,7 @@ import java.lang.reflect.Proxy;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -37,7 +41,7 @@ public class MockServer implements InvocationHandler {
 
   private int statusCode;
   private StringReader in = null;
-  private StringWriter out = null;
+  private ByteArrayOutputStream out = null;
   private String requestData = "";
 
   public MockServer(final HttpServlet target) throws Exception {
@@ -77,8 +81,8 @@ public class MockServer implements InvocationHandler {
     this.requestData = requestData;
   }
 
-  public String getResponseData() {
-    return out.toString();
+  public String getResponseData() throws IOException {
+    return new String(out.toByteArray(), "UTF-8");
   }
 
   @Override
@@ -120,6 +124,12 @@ public class MockServer implements InvocationHandler {
         return "POST";
       } else if (method.getName().equals("setCharacterEncoding") ) {
         return null;
+      } else if (method.getName().equals("getHeader") ) {
+        if ("accept-encoding".equals(args[0]) ) {
+          return null;
+        } else {
+          throw new Exception( (String)args[0]);
+        }
       } else if (method.getName().equals("getReader") ) {
         if (in != null) {
           throw new RuntimeException("already called.");
@@ -137,12 +147,23 @@ public class MockServer implements InvocationHandler {
       } else if (method.getName().equals("setStatus") ) {
         statusCode = (Integer)args[0];
         return null;
+      } else if (method.getName().equals("getOutputStream") ) {
+        if (out != null) {
+          throw new RuntimeException("already called.");
+        }
+        out = new ByteArrayOutputStream();
+        return new ServletOutputStream() {
+          @Override
+          public void write(int b) throws IOException {
+            out.write(b);
+          }
+        };
       } else if (method.getName().equals("getWriter") ) {
         if (out != null) {
           throw new RuntimeException("already called.");
         }
-        out = new StringWriter();
-        return new PrintWriter(out);
+        out = new ByteArrayOutputStream();
+        return new PrintWriter(new OutputStreamWriter(out, "UTF-8") );
       } else {
         throw new RuntimeException("not implemented:" + method.getName() );
       }

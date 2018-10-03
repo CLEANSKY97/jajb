@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Callable
  * @author Kazuhiko Arase
+ * make POJO Service's method callable.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

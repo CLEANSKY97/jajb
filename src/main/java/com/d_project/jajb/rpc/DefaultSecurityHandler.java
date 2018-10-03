@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * DefaultSecurityHandler
  * @author Kazuhiko Arase
+ * accept any body.
  */
 public class DefaultSecurityHandler implements SecurityHandler {
 
