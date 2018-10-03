@@ -2,6 +2,8 @@ package com.d_project.jajb.rpc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -192,21 +194,30 @@ public class RPCServlet extends HttpServlet {
     if (responseData.get(STATUS_KEY).equals(STATUS_SUCCESS) ) {
       final Object result = responseData.get(RESULT_KEY);
       if (result instanceof Node) {
-        new DOMResultHandler( (Node)result).handle(response);
+        new DOMResultHandler( (Node)result).handle(request, response);
         return;
       } else if (result instanceof ResultHandler) {
-        ((ResultHandler)result).handle(response);
+        ((ResultHandler)result).handle(request, response);
         return;
       }
     }
 
-    response.setContentType("application/json;charset=UTF-8");
-    final JSONWriter out = new JSONWriter(response.getWriter() );
-    try {
-      out.writeAny(responseData);
-    } finally {
-      out.close();
-    }
+    final String encoding = "UTF-8";
+    response.setContentType("application/json;charset=" + encoding);
+
+    GZIPUtil.output(request, response, new GZIPUtil.OutputHandler() {
+      @Override
+      @SuppressWarnings("resource")
+      public void writeTo(final OutputStream out) throws IOException {
+        final JSONWriter writer = new JSONWriter(
+            new OutputStreamWriter(out, encoding) );
+        try {
+          writer.writeAny(responseData);
+        } finally {
+          writer.flush();
+        }
+      }
+    });
   }
 
   protected boolean isApplicationException(final Exception e) {

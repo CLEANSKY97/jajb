@@ -1,10 +1,10 @@
 package com.d_project.jajb.rpc;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -25,22 +25,27 @@ public class DOMResultHandler implements ResultHandler {
     this.node = node;
   }
   public void handle(
+    final HttpServletRequest request,
     final HttpServletResponse response
   ) throws ServletException, IOException {
-    response.setContentType("application/xml;charset=UTF-8");
-    final OutputStream out = new BufferedOutputStream(
-        response.getOutputStream() );
-    try {
-      final Transformer tf = TransformerFactory.
-          newInstance().newTransformer();
-      tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-      tf.transform(
-          new DOMSource(node),
-          new StreamResult(out) );
-    } catch(TransformerException e) {
-      throw new IOException(e);
-    } finally {
-      out.close();
-    }
+    final String encoding = "UTF-8";
+    response.setContentType("application/xml;charset=" + encoding);
+    GZIPUtil.output(request, response, new GZIPUtil.OutputHandler() {
+      @Override
+      public void writeTo(final OutputStream out) throws IOException {
+        try {
+          final Transformer tf = TransformerFactory.
+              newInstance().newTransformer();
+          tf.setOutputProperty(OutputKeys.ENCODING, encoding);
+          tf.transform(
+              new DOMSource(node),
+              new StreamResult(out) );
+        } catch(TransformerException e) {
+          throw new IOException(e);
+        } finally {
+          out.flush();
+        }
+      }
+    });
   }
 }
