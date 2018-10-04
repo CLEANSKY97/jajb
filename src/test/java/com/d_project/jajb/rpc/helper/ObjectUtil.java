@@ -1,4 +1,4 @@
-package com.d_project.jajb.rpc;
+package com.d_project.jajb.rpc.helper;
 
 import java.util.Arrays;
 import java.util.HashMap;
