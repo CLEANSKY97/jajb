@@ -3,9 +3,11 @@ package com.d_project.jajb;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Metadata
@@ -19,11 +21,18 @@ class Metadata {
 
     fieldInfoMap = new LinkedHashMap<String, FieldInfo>();
 
+    // check for duplicated field name.
+    final Set<String> fieldNames = new HashSet<String>();
+
     for (Class<?> clazz = target;
         clazz != null; clazz = clazz.getSuperclass() ) {
 
       final List<FieldInfo> fieldInfoList = new ArrayList<FieldInfo>();
       for (final Field field : clazz.getDeclaredFields() ) {
+        if (fieldNames.contains(field.getName() ) ) {
+          continue;
+        }
+        fieldNames.add(field.getName() );
         if (field.getAnnotation(JSONSerializable.class) != null) {
           fieldInfoList.add(new FieldInfo(clazz, field) );
         }

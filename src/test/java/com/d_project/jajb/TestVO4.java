@@ -8,6 +8,9 @@ public class TestVO4 extends TestVO {
   @JSONSerializable
   private int[] arr;
 
+  private String str = "$STR$";
+  private String str2 = "$STR2$";
+
   public boolean isFlg() {
     return flg;
   }
@@ -20,5 +23,16 @@ public class TestVO4 extends TestVO {
   public void setArr(int[] arr) {
     this.arr = arr;
   }
-
+  public String getStr() {
+    return str;
+  }
+  public void setStr(String str) {
+    this.str = str;
+  }
+  public String getStr2() {
+    return str2;
+  }
+  public void setStr2(String str2) {
+    this.str2 = str2;
+  }
 }
