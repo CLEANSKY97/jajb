@@ -27,27 +27,32 @@ class Metadata {
     for (Class<?> clazz = target;
         clazz != null; clazz = clazz.getSuperclass() ) {
 
+      if (clazz.getAnnotation(JSONType.class) == null) {
+        continue;
+      }
+
       final List<FieldInfo> fieldInfoList = new ArrayList<FieldInfo>();
       for (final Field field : clazz.getDeclaredFields() ) {
         if (fieldNames.contains(field.getName() ) ) {
-          continue;
+          throw new IllegalStateException("duplicated field:" + field);
         }
         fieldNames.add(field.getName() );
-        JSONField fieldAnnot = field.getAnnotation(JSONField.class);
+        final JSONField fieldAnnot = field.getAnnotation(JSONField.class);
         if (fieldAnnot != null) {
-          fieldInfoList.add(new FieldInfo(clazz, field, fieldAnnot.order() ) );
+          fieldInfoList.add(new FieldInfo(clazz,
+              field, fieldAnnot.order() ) );
         }
       }
 
-      // fix fields order.
+      // sort fields order.
       fieldInfoList.sort(new Comparator<FieldInfo>() {
         @Override
         public int compare(final FieldInfo f1, final FieldInfo f2) {
-          int o1 = f1.getOrder();
-          int o2 = f2.getOrder();
-          if (o1 != o2) {
-            return o1 < o2? -1 : 1;
+          int cp = f1.getOrder() - f2.getOrder();
+          if (cp != 0) {
+            return cp;
           }
+          // default: sort by name
           return f1.getName().compareTo(f2.getName() );
         }
       });

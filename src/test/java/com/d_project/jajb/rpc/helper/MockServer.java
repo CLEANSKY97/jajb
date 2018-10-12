@@ -90,7 +90,9 @@ public class MockServer implements InvocationHandler {
 
     if (ServletConfig.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
-      if (method.getName().equals("getInitParameter") ) {
+      if (method.getName().equals("getServletName") ) {
+        return "mock";
+      } else if (method.getName().equals("getInitParameter") ) {
         if ("services".equals(args[0]) ) {
           return SERVICES;
         } else if ("security-handler".equals(args[0]) ) {
@@ -108,7 +110,10 @@ public class MockServer implements InvocationHandler {
 
     } else if (ServletContext.class.
         isAssignableFrom(method.getDeclaringClass() ) ) {
-      if (method.getName().equals("getResourceAsStream") ) {
+      
+      if (method.getName().equals("log") ) {
+        return null;
+      } else if (method.getName().equals("getResourceAsStream") ) {
         if (!SERVICES.equals(args[0]) ) {
           throw new Exception( (String)args[0]);
         }
