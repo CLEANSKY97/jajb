@@ -11,7 +11,7 @@ public class TestService {
 
   @Callable
   public String[] test1(int a) {
-    return new String[] { "a", "b" };
+    return new String[] { "a", "" + a };
   }
 
   @Callable
@@ -21,7 +21,7 @@ public class TestService {
 
   @Callable
   public Object[] test2(int a, int b) {
-    return new Object[] { "a", 1 };
+    return new Object[] { "ab", a + b };
   }
 
   @Callable
