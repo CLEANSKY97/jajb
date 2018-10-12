@@ -10,8 +10,8 @@ import com.d_project.jajb.JSON;
 import com.d_project.jajb.TestVO;
 import com.d_project.jajb.TestVO2;
 import com.d_project.jajb.TestVO3;
+import com.d_project.jajb.helper.ObjectUtil;
 import com.d_project.jajb.rpc.helper.MockServer;
-import com.d_project.jajb.rpc.helper.ObjectUtil;
 
 /**
  * RPCTest

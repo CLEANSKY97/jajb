@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.d_project.jajb.helper.ObjectUtil;
+
 /**
  * JSONTest
  * @author Kazuhiko Arase
@@ -197,6 +199,32 @@ public class JSONTest {
     Assert.assertArrayEquals(new BigDecimal[] {
         BigDecimal.valueOf(1), BigDecimal.valueOf(2)},
         JSON.parse("[1,2]", BigDecimal[].class) );
+  }
+
+  @Test
+  public void testPOJO7() throws Exception {
+
+    Object in = ObjectUtil.asMap(
+        "str", "a",
+        "num", 123,
+        "group", ObjectUtil.asMap("s1", "b", "s2", "c"),
+        "items", ObjectUtil.asList(
+            ObjectUtil.asMap("f1", "x"),
+            ObjectUtil.asMap("f1", "y"),
+            ObjectUtil.asMap("f1", null) ) );
+
+    TestVO out = JSON.parse(JSON.stringify(in), TestVO.class);
+
+    Assert.assertEquals("a", out.getStr() );
+    Assert.assertEquals(123, out.getNum() );
+
+    Assert.assertEquals("b", out.getGroup().getS1() );
+    Assert.assertEquals("c", out.getGroup().getS2() );
+
+    Assert.assertEquals(3, out.getItems().size() );
+    Assert.assertEquals("x", out.getItems().get(0).getF1() );
+    Assert.assertEquals("y", out.getItems().get(1).getF1() );
+    Assert.assertNull(out.getItems().get(2).getF1() );
   }
 
 }
