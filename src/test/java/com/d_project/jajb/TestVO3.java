@@ -1,9 +1,9 @@
 package com.d_project.jajb;
 
-@JSONSerializable
+@JSONType
 public class TestVO3 {
 
-  @JSONSerializable
+  @JSONField
   private String f1;
 
   public String getF1() {

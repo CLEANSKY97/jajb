@@ -22,7 +22,7 @@ public class JSONWriter extends FilterWriter {
   protected void writeObject(final Object obj) throws IOException {
     if (obj instanceof Map) {
       writeMap( (Map<String,Object>)obj);
-    } else if (obj.getClass().getAnnotation(JSONSerializable.class) != null) {
+    } else if (obj.getClass().getAnnotation(JSONType.class) != null) {
       writeSerializable(obj);
     } else if (obj instanceof Iterable<?>) {
       writeIterable( (Iterable<Object>)obj);

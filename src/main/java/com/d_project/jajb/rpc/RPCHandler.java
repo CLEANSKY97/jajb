@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.d_project.jajb.DefaultJSONParserHandler;
-import com.d_project.jajb.JSONSerializable;
+import com.d_project.jajb.JSONType;
 
 /**
  * RPCHandler
@@ -72,7 +72,7 @@ public class RPCHandler extends DefaultJSONParserHandler {
         ARGS_INDEX.equals(path[ARGS_INDEX]) ) {
       final int paramIndex = ( (Integer)path[ARGS_DEPTH]).intValue();
       final Class<?> paramType = targetMethod.getParameterTypes()[paramIndex];
-      if (paramType.getAnnotation(JSONSerializable.class) != null) {
+      if (paramType.getAnnotation(JSONType.class) != null) {
         try {
           return paramType.newInstance();
         } catch(RuntimeException e) { 

@@ -6,10 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * JSONSerializable
+ * JSONField
  * @author Kazuhiko Arase
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JSONSerializable {
+public @interface JSONField {
+  int order() default 0;
 }

@@ -71,12 +71,13 @@ Here is a result.
 ```java
 package foo;
 
-import com.d_project.jajb.JSONSerializable;
+import com.d_project.jajb.JSONField;
+import com.d_project.jajb.JSONType;
 
-@JSONSerializable
+@JSONType
 public class MyVO {
 
-  @JSONSerializable
+  @JSONField
   private String message;
   public String getMessage() { return message; }
   public void setMessage(String message) { this.message = message; }

@@ -1,13 +1,14 @@
 package com.d_project.jajb.rpc;
 
-import com.d_project.jajb.JSONSerializable;
+import com.d_project.jajb.JSONField;
+import com.d_project.jajb.JSONType;
 import com.d_project.jajb.TestVO;
 
-@JSONSerializable
+@JSONType
 public class ResVO {
-  @JSONSerializable
+  @JSONField
   private String status;
-  @JSONSerializable
+  @JSONField
   private TestVO result;
   public String getStatus() {
     return status;

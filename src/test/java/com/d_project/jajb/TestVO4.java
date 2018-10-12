@@ -1,11 +1,11 @@
 package com.d_project.jajb;
 
-@JSONSerializable
+@JSONType
 public class TestVO4 extends TestVO {
 
-  @JSONSerializable
+  @JSONField
   private boolean flg;
-  @JSONSerializable
+  @JSONField
   private int[] arr;
 
   private String str = "$STR$";
