@@ -148,13 +148,13 @@ public class JSONTest {
     assertJSON2JSON("{\"arr\":[1,2,3],\"flg\":true,\"group\":null," +
         "\"items\":null,\"num\":1,\"str\":\"1\",\"str2\":\"2\"}",
         "{\"arr\":[1,2,3],\"flg\":true,\"group\":null," +
-            "\"items\":null,\"num\":1}",
+            "\"items\":null,\"num\":1,\"str\":\"1\"}",
         TestVO4.class, new ObjectHandler() {
       @Override
       public Object handle(Object obj) {
         Assert.assertEquals(TestVO4.class, obj.getClass() );
         TestVO4 vo = (TestVO4)obj;
-        Assert.assertEquals("$STR$", vo.getStr() );
+        Assert.assertEquals("1", vo.getStr() );
         Assert.assertEquals("$STR2$", vo.getStr2() );
         Assert.assertEquals(1, vo.getNum() );
         Assert.assertTrue(vo.isFlg() );
