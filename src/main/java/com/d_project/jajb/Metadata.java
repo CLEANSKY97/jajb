@@ -39,15 +39,16 @@ class Metadata {
         }
       }
 
-      // fix fields order.
+      // sort fields order.
       fieldInfoList.sort(new Comparator<FieldInfo>() {
         @Override
         public int compare(final FieldInfo f1, final FieldInfo f2) {
-          int o1 = f1.getOrder();
-          int o2 = f2.getOrder();
+          final int o1 = f1.getOrder();
+          final int o2 = f2.getOrder();
           if (o1 != o2) {
             return o1 < o2? -1 : 1;
           }
+          // default: sort by name
           return f1.getName().compareTo(f2.getName() );
         }
       });
