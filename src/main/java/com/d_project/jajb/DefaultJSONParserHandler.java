@@ -84,8 +84,7 @@ public class DefaultJSONParserHandler implements JSONParserHandler {
 
       // root
 
-    } else if (target.getClass().
-        getAnnotation(JSONSerializable.class) != null) {
+    } else if (target.getClass().getAnnotation(JSONType.class) != null) {
 
       if (objData.dataIndex % 2 == 1) {
         setProperty(target, (String)objData.lastData, data);

@@ -4,23 +4,32 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * FieldInfo
  * @author Kazuhiko Arase
  */
 public class FieldInfo {
 
+  protected static final Logger logger =
+      LoggerFactory.getLogger(FieldInfo.class);
+
   private final String name;
+  private final int order;
   private final Class<?> type;
   private final Class<?> iterableType;
   private final Method getter;
   private final Method setter;
 
-  public FieldInfo(final Class<?> clazz, final Field field) {
+  public FieldInfo(final Class<?> clazz,
+      final Field field, final int order) {
     try {
 
       this.name = field.getName();
       this.type = field.getType();
+      this.order = order;
 
       if (Iterable.class.isAssignableFrom(type) ) {
         final ParameterizedType pt =
@@ -48,6 +57,9 @@ public class FieldInfo {
   public Class<?> getType() {
     return type;
   }
+  public int getOrder() {
+    return order;
+  }
   public Class<?> getIterableType() {
     return iterableType;
   }
@@ -59,12 +71,14 @@ public class FieldInfo {
     } catch(Exception e) { 
       throw new RuntimeException(e);
     }
-    
   }
   public void set(final Object target,
       final Object value) {
     try {
       setter.invoke(target, value);
+    } catch(IllegalArgumentException e) { 
+      logger.debug(setter + ",value=" + value, e);
+      throw e;
     } catch(RuntimeException e) { 
       throw e;
     } catch(Exception e) { 

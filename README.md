@@ -2,7 +2,8 @@ JAJB
 ===
 Java Architecture for JSON Binding
 
-JAJB provides the simplest, shortest way to call the server side java api from the front end javascript.
+JAJB provides the simplest, shortest way to call the server side java api
+from the front end javascript.
 
 ## First step
 
@@ -43,7 +44,7 @@ public class MyService {
 MyService=foo.MyService
 ```
 
-3. Call from a client (with jQuery).
+3. Call from a client (with jQuery here).
 
 ```javascript
   $.ajax({
@@ -70,12 +71,13 @@ Here is a result.
 ```java
 package foo;
 
-import com.d_project.jajb.JSONSerializable;
+import com.d_project.jajb.JSONField;
+import com.d_project.jajb.JSONType;
 
-@JSONSerializable
+@JSONType
 public class MyVO {
 
-  @JSONSerializable
+  @JSONField
   private String message;
   public String getMessage() { return message; }
   public void setMessage(String message) { this.message = message; }
@@ -87,7 +89,6 @@ public class MyVO {
     this.notSerializable = notSerializable;
   }
 }
-
 ```
 
 ```java

@@ -7,12 +7,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.d_project.jajb.JSON;
-import com.d_project.jajb.JSONSerializable;
 import com.d_project.jajb.TestVO;
 import com.d_project.jajb.TestVO2;
 import com.d_project.jajb.TestVO3;
+import com.d_project.jajb.helper.ObjectUtil;
+import com.d_project.jajb.rpc.helper.MockServer;
 
-
+/**
+ * RPCTest
+ * @author Kazuhiko Arase
+ */
 public class RPCTest {
 
   protected static MockServer server;
@@ -31,6 +35,9 @@ public class RPCTest {
         ObjectUtil.asList() ) ) );
 
     server.doService();
+
+    Assert.assertEquals("{\"status\":\"success\",\"result\":null}",
+        server.getResponseData() ); 
   }
 
   @Test
@@ -42,6 +49,9 @@ public class RPCTest {
         ObjectUtil.asList(12) ) ) );
 
     server.doService();
+
+    Assert.assertEquals("{\"status\":\"success\",\"result\":[\"a\",\"12\"]}",
+        server.getResponseData() ); 
   }
 
   @Test
@@ -53,6 +63,9 @@ public class RPCTest {
         ObjectUtil.asList("hello!") ) ) );
 
     server.doService();
+
+    Assert.assertEquals("{\"status\":\"success\",\"result\":\"hello!\"}",
+        server.getResponseData() ); 
   }
 
   @Test
@@ -64,7 +77,25 @@ public class RPCTest {
         ObjectUtil.asList(34, 56) ) ) );
 
     server.doService();
+
+    Assert.assertEquals("{\"status\":\"success\",\"result\":[\"ab\",90]}",
+        server.getResponseData() ); 
   }
+
+  @Test
+  public void testSwap() throws Exception {
+
+    server.setRequestData(JSON.stringify(ObjectUtil.asList(
+        ObjectUtil.asMap(
+            "serviceName", "TestService",
+            "methodName", "testSwap"),
+        ObjectUtil.asList(new int[] {1, 2}) ) ) );
+
+    server.doService();
+
+    Assert.assertEquals("{\"status\":\"success\",\"result\":[2,1]}",
+        server.getResponseData() ); 
+ }
 
   @Test
   public void testMixed() throws Exception {
@@ -94,23 +125,4 @@ public class RPCTest {
     Assert.assertEquals("one", resVO.getResult().getGroup().getS1() );
   }
 
-  @JSONSerializable
-  public static class ResVO {
-    @JSONSerializable
-    private String status;
-    @JSONSerializable
-    private TestVO result;
-    public String getStatus() {
-      return status;
-    }
-    public void setStatus(String status) {
-      this.status = status;
-    }
-    public TestVO getResult() {
-      return result;
-    }
-    public void setResult(TestVO result) {
-      this.result = result;
-    }
-  }
 }

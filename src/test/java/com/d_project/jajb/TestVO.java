@@ -2,16 +2,16 @@ package com.d_project.jajb;
 
 import java.util.List;
 
-@JSONSerializable
+@JSONType
 public class TestVO {
 
-  @JSONSerializable
+  @JSONField
   private String str;
-  @JSONSerializable
+  @JSONField
   private int num;
-  @JSONSerializable
+  @JSONField
   private TestVO2 group;
-  @JSONSerializable
+  @JSONField
   private List<TestVO3> items;
 
   public String getStr() {

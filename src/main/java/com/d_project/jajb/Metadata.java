@@ -3,9 +3,11 @@ package com.d_project.jajb;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Metadata
@@ -19,13 +21,21 @@ class Metadata {
 
     fieldInfoMap = new LinkedHashMap<String, FieldInfo>();
 
+    // check for duplicated field name.
+    final Set<String> fieldNames = new HashSet<String>();
+
     for (Class<?> clazz = target;
         clazz != null; clazz = clazz.getSuperclass() ) {
 
       final List<FieldInfo> fieldInfoList = new ArrayList<FieldInfo>();
       for (final Field field : clazz.getDeclaredFields() ) {
-        if (field.getAnnotation(JSONSerializable.class) != null) {
-          fieldInfoList.add(new FieldInfo(clazz, field) );
+        if (fieldNames.contains(field.getName() ) ) {
+          continue;
+        }
+        fieldNames.add(field.getName() );
+        JSONField fieldAnnot = field.getAnnotation(JSONField.class);
+        if (fieldAnnot != null) {
+          fieldInfoList.add(new FieldInfo(clazz, field, fieldAnnot.order() ) );
         }
       }
 
@@ -33,6 +43,11 @@ class Metadata {
       fieldInfoList.sort(new Comparator<FieldInfo>() {
         @Override
         public int compare(final FieldInfo f1, final FieldInfo f2) {
+          int o1 = f1.getOrder();
+          int o2 = f2.getOrder();
+          if (o1 != o2) {
+            return o1 < o2? -1 : 1;
+          }
           return f1.getName().compareTo(f2.getName() );
         }
       });
