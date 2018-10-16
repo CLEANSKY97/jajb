@@ -53,9 +53,6 @@ sourceSets {
 
 repositories {
   mavenCentral()
-  maven {
-    url 'file:../..'
-  }
 }
 
 dependencies {
@@ -66,6 +63,5 @@ dependencies {
   providedCompile "javax.servlet:servlet-api:2.3"
 
   testCompile "junit:junit:4.12"
-  testCompile fileTree(dir: "lib/java", include: "*.jar")
 
 }
