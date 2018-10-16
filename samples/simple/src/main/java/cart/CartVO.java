@@ -14,6 +14,8 @@ public class CartVO {
   @JSONField
   private String comment;
   @JSONField
+  private int itemSeqNo;
+  @JSONField
   private List<ItemVO> items;
 
   public long getCartId() {
@@ -28,6 +30,12 @@ public class CartVO {
   public void setComment(String comment) {
     this.comment = comment;
   }
+  public int getItemSeqNo() {
+    return itemSeqNo;
+  }
+  public void setItemSeqNo(int itemSeqNo) {
+    this.itemSeqNo = itemSeqNo;
+  }
   public List<ItemVO> getItems() {
     return items;
   }
@@ -37,8 +45,11 @@ public class CartVO {
 
   @JSONType
   public static class ItemVO {
+
     @JSONField
     private boolean checked;
+    @JSONField
+    private int itemNo;
     @JSONField
     private String itemName;
     @JSONField
@@ -47,11 +58,18 @@ public class CartVO {
     private BigDecimal amount;
     @JSONField
     private BigDecimal tax;
+
     public boolean isChecked() {
       return checked;
     }
     public void setChecked(boolean checked) {
       this.checked = checked;
+    }
+    public int getItemNo() {
+      return itemNo;
+    }
+    public void setItemNo(int itemNo) {
+      this.itemNo = itemNo;
     }
     public String getItemName() {
       return itemName;
@@ -77,5 +95,6 @@ public class CartVO {
     public void setTax(BigDecimal tax) {
       this.tax = tax;
     }
+
   }
 }

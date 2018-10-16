@@ -17,18 +17,27 @@ public class CartService {
     CartVO cartVO = new CartVO();
     cartVO.setCartId(System.nanoTime() );
     cartVO.setComment("");
+    cartVO.setItemSeqNo(1);
     cartVO.setItems(new ArrayList<ItemVO>() );
     return cartVO;
   }
 
   @Callable
   public CartVO addItem(CartVO cartVO) {
+
+    // create a new item.
     ItemVO itemVO = new ItemVO();
+    itemVO.setItemNo(cartVO.getItemSeqNo() );
     itemVO.setItemName("Name of Item"); 
     itemVO.setAmount(BigDecimal.valueOf(100) ); 
     itemVO.setTax(BigDecimal.valueOf(10) ); 
     itemVO.setShipDate(new SimpleDateFormat().format(new Date() ) ); 
+
     cartVO.getItems().add(itemVO);
+
+    // increment seq-no.
+    cartVO.setItemSeqNo(cartVO.getItemSeqNo() + 1);
+
     return cartVO;
   }
 
