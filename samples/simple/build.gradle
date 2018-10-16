@@ -1,0 +1,67 @@
+
+apply plugin: "war"
+apply plugin: "eclipse-wtp"
+
+sourceCompatibility = 1.6
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+configurations {
+}
+
+eclipse {
+  classpath {
+    defaultOutputDir = file("build/wtp/classes")
+  }
+  wtp {
+    component {
+      contextPath = "simple"
+      deployName = "simple"
+      resource sourcePath: "src/main/webapp", deployPath: "/"
+      property name: "java-output-path", value: "/simple/build/wtp/classes"
+    }
+  }
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = [
+        "src/main/java",
+      ]
+    }
+    resources {
+      srcDirs = [
+        "src/main/resources"
+      ]
+    }
+  }
+  test {
+    java {
+      srcDirs = [
+        "src/test/java"
+      ]
+    }
+    resources {
+      srcDirs = [
+        "src/test/resources"
+      ]
+    }
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+
+  compile "org.slf4j:slf4j-log4j12:1.6.3"
+  compile "com.d-project:jajb:0.1.1"
+
+  providedCompile "javax.servlet:servlet-api:2.3"
+
+  testCompile "junit:junit:4.12"
+
+}
