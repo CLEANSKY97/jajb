@@ -17,7 +17,7 @@ public class CartService {
     CartVO cartVO = new CartVO();
     cartVO.setCartId(System.nanoTime() );
     cartVO.setComment("");
-    cartVO.setItems(new ArrayList<CartVO.ItemVO>() );
+    cartVO.setItems(new ArrayList<ItemVO>() );
     return cartVO;
   }
 
@@ -34,15 +34,16 @@ public class CartService {
 
   @Callable
   public CartVO removeItems(CartVO cartVO) {
-
-    List<ItemVO> newItems = new ArrayList<CartVO.ItemVO>();
+    List<ItemVO> newItems = new ArrayList<ItemVO>();
     for (ItemVO itemVO : cartVO.getItems() ) {
       if (!itemVO.isChecked() ) {
         newItems.add(itemVO);
+      } else {
+        // checked for removal.
       }
     }
-
     cartVO.setItems(newItems);
     return cartVO;
   }
+
 }

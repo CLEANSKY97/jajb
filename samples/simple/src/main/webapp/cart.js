@@ -1,13 +1,13 @@
 
 var vm = new Vue({
   el : '#myapp',
+  data : {
+    cartVO : null
+  },
   mounted : function() {
     this.cartService('newCart')().done(function(data) {
       this.cartVO = data.result;
     });
-  },
-  data : {
-    cartVO : null
   },
   methods : {
     cartService : jajb.getService('CartService'),
