@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+.number { text-align: right; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="assets/ajax-wrapper.js"></script>
+</head>
+<body>
+
+<div id="myapp">
+  <div v-if="cartVO">
+    <label>CartId: {{cartVO.cartId}}</label>
+    <div>
+      <button @click="add_clickHandler">Add</button>
+      <button @click="remove_clickHandler">Remove</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>&#x0a;</th>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Tax</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in cartVO.items">
+          <td><input type="checkbox" v-model="item.checked" /></td>
+          <td><input type="text" v-model="item.itemName" /></td>
+          <td class="number">{{item.amount}}</td>
+          <td class="number">{{item.tax}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="cart.js"></script>
+
+</body>
+</html>

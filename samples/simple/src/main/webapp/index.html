@@ -6,7 +6,37 @@
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
-  <script src="index.js"></script>
+  <script>
+
+$(function() {
+
+  $.ajax({
+    url : 'jajb-rpc',
+    method : 'POST',
+    type : 'application/json',
+    data : JSON.stringify([
+      { serviceName : 'MyService', methodName : 'add' }, // opts
+      [ 3, 5 ] // args
+    ])
+  }).done(function(data) {
+    console.log(JSON.stringify(data) );
+  });
+
+  $.ajax({
+    url : 'jajb-rpc',
+    method : 'POST',
+    type : 'application/json',
+    data : JSON.stringify([
+      { serviceName : 'MyVOService', methodName : 'helloVO' }, // opts
+      [ { message : 'abc', notSerializable : 'will be ignored' } ] // args
+    ])
+  }).done(function(data) {
+    console.log(JSON.stringify(data) );
+  });
+
+});
+
+  </script>
 </head>
 <body>
   Press F12 key to open the console.
