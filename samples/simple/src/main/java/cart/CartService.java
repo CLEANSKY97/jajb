@@ -35,7 +35,7 @@ public class CartService {
 
     cartVO.getItems().add(itemVO);
 
-    // increment seq-no.
+    // increment a seq-no.
     cartVO.setItemSeqNo(cartVO.getItemSeqNo() + 1);
 
     return cartVO;

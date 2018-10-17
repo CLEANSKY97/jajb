@@ -9,7 +9,6 @@ var jajb = function() {
   var getService = function(serviceName, serviceOpts) {
     return function(methodName, methodOpts) {
       var _this = this;
-      var opts = { showBlock : true };
       return function() {
 
         var callbacks = {
