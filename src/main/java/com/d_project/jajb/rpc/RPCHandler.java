@@ -20,11 +20,13 @@ public class RPCHandler extends DefaultJSONParserHandler {
   protected static final int PARAMS_DEPTH = 1;
   protected static final int ARGS_DEPTH = PARAMS_DEPTH + 1;
 
+  private final ServiceProvider serviceProvider;
   private Object service = null;
   private Method targetMethod = null;
 
-  public RPCHandler() {
+  public RPCHandler(final ServiceProvider serviceProvider) {
     super();
+    this.serviceProvider = serviceProvider;
   }
 
   public Method getTargetMethod() {
@@ -56,8 +58,8 @@ public class RPCHandler extends DefaultJSONParserHandler {
       final List<Object> params = (List<Object>)getStackObject(PARAMS_DEPTH);
       final Map<String,Object> opts =
           (Map<String,Object>)params.get(OPTS_INDEX.intValue() );
-      service = ServiceLocator.getInstance().
-          getService( (String)opts.get("serviceName") );
+      service = serviceProvider.getServiceByName(
+          (String)opts.get("serviceName") );
       targetMethod = findTargetMethod(
           service, (String)opts.get("methodName") );
     }
