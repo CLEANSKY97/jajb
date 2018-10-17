@@ -1,5 +1,5 @@
 //
-// This sample wraps jQuery's ajax and enables calling server-side service.
+// This sample wraps jquery's ajax and enables calling server-side service.
 //
 
 var jajb = function() {
@@ -8,7 +8,9 @@ var jajb = function() {
 
   var getService = function(serviceName, serviceOpts) {
     return function(methodName, methodOpts) {
+
       var _this = this;
+
       return function() {
 
         var callbacks = {

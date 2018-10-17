@@ -6,7 +6,7 @@
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
-  <script src="assets/ajax-wrapper.js"></script>
+  <script src="assets/jquery-ajax-wrapper.js"></script>
   <script>
 
 $(function() {
@@ -23,7 +23,7 @@ $(function() {
     console.log(JSON.stringify(data) );
   });
 
-  // with ajax-wrapper.js
+  // with jquery-ajax-wrapper.js
   jajb.getService('MyService')('add')(3, 5).done(function(data) {
     console.log(JSON.stringify(data) );
   });
