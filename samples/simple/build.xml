@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="dist" basedir=".">
+  <target name="dist">
+    <zip destfile="build/libs/simple-src.zip">
+      <zipfileset dir="." defaultexcludes="false">
+        <exclude name="${target-name}" />
+        <exclude name=".gradle/**" />
+        <exclude name="build/**" />
+        <exclude name="gradle.properties" />
+      </zipfileset>
+    </zip>
+  </target>
+</project>

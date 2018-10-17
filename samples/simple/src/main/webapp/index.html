@@ -6,6 +6,7 @@
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
+  <script src="assets/ajax-wrapper.js"></script>
   <script>
 
 $(function() {
@@ -19,6 +20,11 @@ $(function() {
       [ 3, 5 ] // args
     ])
   }).done(function(data) {
+    console.log(JSON.stringify(data) );
+  });
+
+  // with ajax-wrapper.js
+  jajb.getService('MyService')('add')(3, 5).done(function(data) {
     console.log(JSON.stringify(data) );
   });
 
@@ -43,5 +49,5 @@ $(function() {
     <li>Press F12 key to open the console.</li>
     <li><a href="cart.html">Cart Demo</a></li>
   </ul>
-
+</body>
 </html>
