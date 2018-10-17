@@ -26,7 +26,8 @@
         <tr>
           <th>&#x0a;</th>
           <th>No.</th>
-          <th>Name</th>
+          <th>Item Name</th>
+          <th>Ship Date</th>
           <th>Amount</th>
           <th>Tax</th>
         </tr>
@@ -36,6 +37,7 @@
           <td><input type="checkbox" v-model="item.checked" /></td>
           <td class="number">{{item.itemNo}}</td>
           <td><input type="text" v-model="item.itemName" /></td>
+          <td class="number">{{item.shipDate}}</td>
           <td class="number">{{item.amount}}</td>
           <td class="number">{{item.tax}}</td>
         </tr>
