@@ -66,7 +66,7 @@ Here is a result.
 {"status":"success","result":8}
 ```
 
-With [ajax-wrapper.js](https://raw.githubusercontent.com/kazuhikoarase/jajb/master/samples/simple/src/main/webapp/assets/ajax-wrapper.js), call more simply.
+With [jquery-ajax-wrapper.js](https://raw.githubusercontent.com/kazuhikoarase/jajb/master/samples/simple/src/main/webapp/assets/jquery-ajax-wrapper.js), call more simply.
 
 ```javascript
   jajb.getService('MyService')('add')(3, 5).done(function(data) {
