@@ -14,6 +14,8 @@ public class CartService {
 
   @Callable
   public CartVO newCart() {
+
+    // create new a cart with no items.
     CartVO cartVO = new CartVO();
     cartVO.setCartId(System.nanoTime() );
     cartVO.setComment("");
@@ -35,7 +37,7 @@ public class CartService {
 
     cartVO.getItems().add(itemVO);
 
-    // increment seq-no.
+    // increment a seq-no.
     cartVO.setItemSeqNo(cartVO.getItemSeqNo() + 1);
 
     return cartVO;
