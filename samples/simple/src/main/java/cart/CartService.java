@@ -15,7 +15,7 @@ public class CartService {
   @Callable
   public CartVO newCart() {
 
-    // create new a cart with no items.
+    // create a new cart with no items.
     CartVO cartVO = new CartVO();
     cartVO.setCartId(System.nanoTime() );
     cartVO.setComment("");
