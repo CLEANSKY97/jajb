@@ -35,6 +35,7 @@ public class DefaultSecurityHandler implements SecurityHandler {
     if (logger.isDebugEnabled() ) {
       logger.debug("isAuthorized " + opts + " - " + targetMethod);
     }
+    // allow all.
     return true;
   }
 }
