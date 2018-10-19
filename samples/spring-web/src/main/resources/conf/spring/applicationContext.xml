@@ -10,4 +10,12 @@
 
   <context:component-scan base-package="foo,cart" />
 
+  <bean id="applicationExceptions" class="java.util.ArrayList">
+    <constructor-arg>
+      <list>
+        <value type="java.lang.Class">foo.ApplicationException</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
 </beans>

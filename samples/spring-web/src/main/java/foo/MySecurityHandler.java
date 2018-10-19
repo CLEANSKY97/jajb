@@ -21,6 +21,7 @@ public class MySecurityHandler implements SecurityHandler {
   @Override
   public boolean isAuthorized(HttpServletRequest request,
       Map<String, Object> opts, Method targetMethod) throws ServletException {
+    // allow all.
     return true;
   }
 }
