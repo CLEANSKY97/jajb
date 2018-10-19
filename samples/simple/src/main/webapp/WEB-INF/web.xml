@@ -14,11 +14,14 @@
     </init-param>
     <init-param>
       <param-name>security-handler</param-name>
-      <param-value>foo.MySecurityHandler</param-value>
+      <param-value>cart.MySecurityHandler</param-value>
     </init-param>
+    <!--
+      applicationException return a normal state (200 OK) with message.
+     -->
     <init-param>
       <param-name>application-exceptions</param-name>
-      <param-value>foo.ApplicationException</param-value>
+      <param-value>cart.ApplicationException</param-value>
     </init-param>
   </servlet>
 

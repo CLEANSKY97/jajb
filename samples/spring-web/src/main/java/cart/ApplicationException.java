@@ -1,4 +1,4 @@
-package foo;
+package cart;
 
 @SuppressWarnings("serial")
 public class ApplicationException extends RuntimeException {
