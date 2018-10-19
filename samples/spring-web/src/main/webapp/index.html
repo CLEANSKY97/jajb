@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="assets/jquery-ajax-wrapper.js"></script>
+  <script>
+
+$(function() {
+
+  $.ajax({
+    url : 'jajb-rpc',
+    method : 'POST',
+    type : 'application/json',
+    data : JSON.stringify([
+      { serviceName : 'MyService', methodName : 'add' }, // opts
+      [ 3, 5 ] // args
+    ])
+  }).done(function(data) {
+    console.log(JSON.stringify(data) );
+  });
+
+  // with jquery-ajax-wrapper.js
+  jajb.getService('MyService')('add')(3, 5).done(function(data) {
+    console.log(JSON.stringify(data) );
+  });
+
+  $.ajax({
+    url : 'jajb-rpc',
+    method : 'POST',
+    type : 'application/json',
+    data : JSON.stringify([
+      { serviceName : 'MyVOService', methodName : 'helloVO' }, // opts
+      [ { message : 'abc', notSerializable : 'will be ignored' } ] // args
+    ])
+  }).done(function(data) {
+    console.log(JSON.stringify(data) );
+  });
+
+});
+
+  </script>
+</head>
+<body>
+  <ul>
+    <li>Press F12 key to open the console.</li>
+    <li><a href="cart.html">Cart Demo</a></li>
+  </ul>
+</body>
+</html>
