@@ -12,6 +12,14 @@
       <param-name>services</param-name>
       <param-value>/WEB-INF/services.properties</param-value>
     </init-param>
+    <init-param>
+      <param-name>security-handler</param-name>
+      <param-value>foo.MySecurityHandler</param-value>
+    </init-param>
+    <init-param>
+      <param-name>application-exceptions</param-name>
+      <param-value>foo.ApplicationException</param-value>
+    </init-param>
   </servlet>
 
   <servlet-mapping>
