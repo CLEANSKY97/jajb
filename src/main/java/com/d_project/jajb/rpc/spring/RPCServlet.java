@@ -39,10 +39,11 @@ public class RPCServlet extends AbstractRPCServlet {
   public void init(final ServletConfig config) throws ServletException {
 
     super.init(config);
+
     appContext = WebApplicationContextUtils.
         getRequiredWebApplicationContext(getServletContext() );
-
-    applicationExceptions = (List<Class<?>>)appContext.getBean("applicationExceptions");
+    applicationExceptions =
+        (List<Class<?>>)appContext.getBean("applicationExceptions");
     securityHandler = appContext.getBean(SecurityHandler.class);
   }
 
@@ -52,13 +53,8 @@ public class RPCServlet extends AbstractRPCServlet {
   }
 
   @Override
-  protected boolean isApplicationException(final Exception e) {
-    for (final Class<?> c : applicationExceptions) {
-      if (c.isAssignableFrom(e.getClass() ) ) {
-        return true;
-      }
-    }
-    return false;
+  protected List<Class<?>> getApplicationExceptions() {
+    return applicationExceptions;
   }
 
   @Override
