@@ -10,10 +10,13 @@
 
   <context:component-scan base-package="foo,cart" />
 
+  <!--
+    applicationException return a normal state (200 OK) with message.
+   -->
   <bean id="applicationExceptions" class="java.util.ArrayList">
     <constructor-arg>
       <list>
-        <value type="java.lang.Class">foo.ApplicationException</value>
+        <value type="java.lang.Class">cart.ApplicationException</value>
       </list>
     </constructor-arg>
   </bean>

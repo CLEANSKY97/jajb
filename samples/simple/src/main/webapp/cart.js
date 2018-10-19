@@ -14,11 +14,15 @@ var vm = new Vue({
     add_clickHandler : function() {
       this.cartService('addItem')(this.cartVO).done(function(data) {
         this.cartVO = data.result;
+      }).fail(function(data) {
+        alert(data.message);
       });
     },
     remove_clickHandler : function() {
       this.cartService('removeItems')(this.cartVO).done(function(data) {
         this.cartVO = data.result;
+      }).fail(function(data) {
+        alert(data.message);
       });
     }
   }

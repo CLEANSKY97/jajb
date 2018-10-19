@@ -45,13 +45,18 @@ public class CartService {
 
   @Callable
   public CartVO removeItems(CartVO cartVO) {
+    int removeCount = 0;
     List<ItemVO> newItems = new ArrayList<ItemVO>();
     for (ItemVO itemVO : cartVO.getItems() ) {
       if (!itemVO.isChecked() ) {
         newItems.add(itemVO);
       } else {
         // checked for removal.
+        removeCount += 1;
       }
+    }
+    if (removeCount == 0) {
+      throw new ApplicationException("nothing to remove.");
     }
     cartVO.setItems(newItems);
     return cartVO;
