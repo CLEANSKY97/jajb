@@ -1,12 +1,12 @@
 package com.d_project.jajb.rpc;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -27,7 +27,7 @@ public class RPCServlet extends AbstractRPCServlet {
 
   private SecurityHandler securityHandler;
   private Map<String, Object> services;
-  private Set<Class<?>> applicationExceptions;
+  private List<Class<?>> applicationExceptions;
 
   private final ServiceProvider serviceProvider = new ServiceProvider() {
     @Override
@@ -67,7 +67,7 @@ public class RPCServlet extends AbstractRPCServlet {
 
   protected void parseApplicationExceptions(
       final ServletConfig config) throws Exception {
-    applicationExceptions = new HashSet<Class<?>>();
+    applicationExceptions = new ArrayList<Class<?>>();
     final String appExceptions = config.
         getInitParameter(APPLICATION_EXCEPTIONS_KEY);
     if (appExceptions != null) {
@@ -128,13 +128,8 @@ public class RPCServlet extends AbstractRPCServlet {
   }
 
   @Override
-  protected boolean isApplicationException(final Exception e) {
-    for (final Class<?> c : applicationExceptions) {
-      if (c.isAssignableFrom(e.getClass() ) ) {
-        return true;
-      }
-    }
-    return false;
+  protected List<Class<?>> getApplicationExceptions() {
+    return applicationExceptions;
   }
 
   @Override

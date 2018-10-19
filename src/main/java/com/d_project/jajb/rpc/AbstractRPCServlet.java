@@ -37,6 +37,8 @@ public abstract class AbstractRPCServlet extends HttpServlet {
   protected static final Logger logger =
       LoggerFactory.getLogger(RPCServlet.class);
 
+  private Class<?>[] applicationExceptions = null;
+
   protected AbstractRPCServlet() {
   }
 
@@ -140,8 +142,24 @@ public abstract class AbstractRPCServlet extends HttpServlet {
     });
   }
 
+  protected boolean isApplicationException(final Exception e) {
+
+    if (this.applicationExceptions == null) {
+      final List<Class<?>> applicationExceptions = getApplicationExceptions();
+      this.applicationExceptions = applicationExceptions.toArray(
+          new Class<?>[applicationExceptions.size()] );
+    }
+
+    for (final Class<?> c : applicationExceptions) {
+      if (c.isAssignableFrom(e.getClass() ) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   protected abstract RPCHandler createHandler();
-  protected abstract boolean isApplicationException(Exception e);
+  protected abstract List<Class<?>> getApplicationExceptions();
   protected abstract SecurityHandler getSecurityHandler();
 
 }
