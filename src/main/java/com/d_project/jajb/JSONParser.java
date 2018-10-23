@@ -38,9 +38,6 @@ public class JSONParser extends FilterReader {
   }
 
   protected char seekChar(final boolean strict) throws IOException {
-    if (eof) {
-      throw new EOFException();
-    }
     while (!eof) {
       if (buf == -1) {
         buf = in.read();
