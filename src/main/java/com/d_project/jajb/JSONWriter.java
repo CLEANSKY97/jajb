@@ -107,7 +107,7 @@ public class JSONWriter extends FilterWriter {
     int cnt = 0;
 
     final Metadata meta = MetadataCache.getMetadata(obj.getClass() );
-    for (final FieldInfo fieldInfo : meta.getFieldInfos() ) {
+    for (final FieldInfo fieldInfo : meta.getFieldInfoList() ) {
 
       if (cnt > 0) {
         out.write(',');

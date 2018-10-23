@@ -2,6 +2,7 @@ package com.d_project.jajb;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -14,6 +15,19 @@ import java.util.Set;
  * @author Kazuhiko Arase
  */
 class Metadata {
+
+  private static final Comparator<FieldInfo> fieldInfoComparator =
+      new Comparator<FieldInfo>() {
+    @Override
+    public int compare(final FieldInfo f1, final FieldInfo f2) {
+      final int cp = f1.getOrder() - f2.getOrder();
+      if (cp != 0) {
+        return cp;
+      }
+      // default: sort by name
+      return f1.getName().compareTo(f2.getName() );
+    }
+  };
 
   private final Map<String,FieldInfo> fieldInfoMap;
 
@@ -45,17 +59,7 @@ class Metadata {
       }
 
       // sort fields order.
-      fieldInfoList.sort(new Comparator<FieldInfo>() {
-        @Override
-        public int compare(final FieldInfo f1, final FieldInfo f2) {
-          int cp = f1.getOrder() - f2.getOrder();
-          if (cp != 0) {
-            return cp;
-          }
-          // default: sort by name
-          return f1.getName().compareTo(f2.getName() );
-        }
-      });
+      fieldInfoList.sort(fieldInfoComparator);
 
       for (final FieldInfo fieldInfo : fieldInfoList) {
         if (!fieldInfoMap.containsKey(fieldInfo.getName() ) ) {
@@ -68,7 +72,8 @@ class Metadata {
   public FieldInfo getFieldInfo(final String name) {
     return fieldInfoMap.get(name);
   }
-  public Iterable<FieldInfo> getFieldInfos() {
+
+  public Collection<FieldInfo> getFieldInfoList() {
     return fieldInfoMap.values();
   }
 }

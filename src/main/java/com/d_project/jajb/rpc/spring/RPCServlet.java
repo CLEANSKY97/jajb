@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.d_project.jajb.rpc.AbstractRPCServlet;
-import com.d_project.jajb.rpc.RPCHandler;
 import com.d_project.jajb.rpc.SecurityHandler;
 import com.d_project.jajb.rpc.ServiceProvider;
 
@@ -48,8 +47,8 @@ public class RPCServlet extends AbstractRPCServlet {
   }
 
   @Override
-  protected RPCHandler createHandler() {
-    return new RPCHandler(serviceProvider);
+  protected ServiceProvider getServiceProvider() {
+    return serviceProvider;
   }
 
   @Override
