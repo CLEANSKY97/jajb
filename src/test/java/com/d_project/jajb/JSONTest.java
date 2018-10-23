@@ -16,34 +16,6 @@ import com.d_project.jajb.helper.ObjectUtil;
  */
 public class JSONTest {
 
-  protected final Logger logger = LoggerFactory.getLogger(getClass() );
-
-  protected interface ObjectHandler {
-    Object handle(Object obj);
-  }
-
-  protected void assertJSON2JSON(String src) throws Exception{
-    assertJSON2JSON(src, src);
-  }
-
-  protected static void assertJSON2JSON(String src, String expected) throws Exception {
-    String actual = JSON.stringify(JSON.parse(src) );
-    Assert.assertEquals(expected, actual);
-  }
-
-  protected static void assertJSON2JSON(String src,
-      Class<?> targetClass,
-      ObjectHandler h) throws Exception{
-    assertJSON2JSON(src, src, targetClass, h);
-  }
-
-  protected static void assertJSON2JSON(String src, String expected,
-      Class<?> targetClass,
-      ObjectHandler h) throws Exception {
-    String actual = JSON.stringify(h.handle(JSON.parse(src, targetClass) ) );
-    Assert.assertEquals(expected, actual);
-  }
-
   @Test
   public void testPlain() throws Exception {
 
@@ -62,6 +34,20 @@ public class JSONTest {
   }
 
   @Test
+  public void testNumber() throws Exception {
+    assertNumber("-1.25");
+    assertInt("-1");
+    assertInt("0");
+    assertInt("-0");
+    assertInt("+0");
+    assertInt("1");
+    assertInt("+1");
+    assertNumber("1.25");
+    assertNumber("+1.25");
+  }
+
+  @Test
+  
   public void testObjects() throws Exception {
 
     assertJSON2JSON("[1,20,-3]");
@@ -227,4 +213,51 @@ public class JSONTest {
     Assert.assertNull(out.getItems().get(2).getF1() );
   }
 
+  protected final Logger logger = LoggerFactory.getLogger(getClass() );
+
+  protected interface ObjectHandler {
+    Object handle(Object obj);
+  }
+
+  protected void assertJSON2JSON(String src) throws Exception{
+    assertJSON2JSON(src, src);
+  }
+
+  protected static void assertInt(String numStr) throws Exception {
+    final BigDecimal bigDec = new BigDecimal(numStr);
+    final BigInteger bigInt = new BigInteger(numStr);
+    Assert.assertEquals(bigDec, JSON.parse(numStr, BigDecimal.class) );
+    Assert.assertEquals(bigInt, JSON.parse(numStr, BigInteger.class) );
+    Assert.assertEquals(bigDec.byteValue(), (byte)JSON.parse(numStr, Byte.TYPE) );
+    Assert.assertEquals(bigDec.intValue(), (int)JSON.parse(numStr, Integer.TYPE) );
+    Assert.assertEquals(bigDec.shortValue(), (int)JSON.parse(numStr, Short.TYPE) );
+    Assert.assertEquals(bigDec.longValue(), (long)JSON.parse(numStr, Long.TYPE) );
+    Assert.assertEquals(bigDec.floatValue(), (float)JSON.parse(numStr, Float.TYPE), 0);
+    Assert.assertEquals(bigDec.doubleValue(), (double)JSON.parse(numStr, Double.TYPE), 0);
+  }
+
+  protected static void assertNumber(String numStr) throws Exception {
+    final BigDecimal bigDec = new BigDecimal(numStr);
+    Assert.assertEquals(bigDec, JSON.parse(numStr, BigDecimal.class) );
+    Assert.assertEquals(bigDec.floatValue(), (float)JSON.parse(numStr, Float.TYPE), 0);
+    Assert.assertEquals(bigDec.doubleValue(), (double)JSON.parse(numStr, Double.TYPE), 0);
+  }
+
+  protected static void assertJSON2JSON(String src, String expected) throws Exception {
+    String actual = JSON.stringify(JSON.parse(src) );
+    Assert.assertEquals(expected, actual);
+  }
+
+  protected static void assertJSON2JSON(String src,
+      Class<?> targetClass,
+      ObjectHandler h) throws Exception{
+    assertJSON2JSON(src, src, targetClass, h);
+  }
+
+  protected static void assertJSON2JSON(String src, String expected,
+      Class<?> targetClass,
+      ObjectHandler h) throws Exception {
+    String actual = JSON.stringify(h.handle(JSON.parse(src, targetClass) ) );
+    Assert.assertEquals(expected, actual);
+  }
 }

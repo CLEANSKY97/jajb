@@ -19,7 +19,7 @@ import javax.servlet.ServletException;
 public class RPCServlet extends AbstractRPCServlet {
 
   private static final String DEFAULT_SECURITY_HANDLER_CLASS =
-      com.d_project.jajb.rpc.DefaultSecurityHandler.class.getName();
+      DefaultSecurityHandler.class.getName();
 
   private static final String SECURITY_HANDLER_KEY = "security-handler";
   private static final String APPLICATION_EXCEPTIONS_KEY =
@@ -85,8 +85,8 @@ public class RPCServlet extends AbstractRPCServlet {
         config.getInitParameter(SECURITY_HANDLER_KEY);
     securityHandler = (SecurityHandler)Class.forName(
         securityHandlerClass != null?
-            securityHandlerClass : DEFAULT_SECURITY_HANDLER_CLASS).
-        newInstance();
+            securityHandlerClass :
+              DEFAULT_SECURITY_HANDLER_CLASS).newInstance();
     securityHandler.init(config);
   }
 
@@ -123,8 +123,8 @@ public class RPCServlet extends AbstractRPCServlet {
   }
 
   @Override
-  protected RPCHandler createHandler() {
-    return new RPCHandler(serviceProvider);
+  protected ServiceProvider getServiceProvider() {
+    return serviceProvider;
   }
 
   @Override

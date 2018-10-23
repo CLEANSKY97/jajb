@@ -158,7 +158,11 @@ public abstract class AbstractRPCServlet extends HttpServlet {
     return false;
   }
 
-  protected abstract RPCHandler createHandler();
+  protected final RPCHandler createHandler() {
+    return new DefaultRPCHandler(getServiceProvider() );
+  }
+
+  protected abstract ServiceProvider getServiceProvider();
   protected abstract List<Class<?>> getApplicationExceptions();
   protected abstract SecurityHandler getSecurityHandler();
 
