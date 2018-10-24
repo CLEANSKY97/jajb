@@ -7,14 +7,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.d_project.jajb.JSONParser;
@@ -35,7 +35,7 @@ public abstract class AbstractRPCServlet extends HttpServlet {
   private static final String MESSAGE_KEY = "message";
 
   protected static final Logger logger =
-      LoggerFactory.getLogger(RPCServlet.class);
+      Logger.getLogger(RPCServlet.class.getName() );
 
   private Class<?>[] applicationExceptions = null;
 
@@ -93,8 +93,8 @@ public abstract class AbstractRPCServlet extends HttpServlet {
 
         // application exception returns message with normal state(200 OK)
 
-        if (logger.isDebugEnabled() ) {
-          logger.error(e.getMessage(), e);
+        if (logger.isLoggable(Level.FINEST) ) {
+          logger.log(Level.FINEST, e.getMessage(), e);
         }
 
         responseData.put(STATUS_KEY, STATUS_FAILURE);
@@ -102,7 +102,7 @@ public abstract class AbstractRPCServlet extends HttpServlet {
 
       } else {
 
-        logger.error(e.getMessage(), e);
+        logger.log(Level.SEVERE, e.getMessage(), e);
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         responseData.put(STATUS_KEY, STATUS_FAILURE);

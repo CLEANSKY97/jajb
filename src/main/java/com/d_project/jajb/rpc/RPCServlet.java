@@ -93,7 +93,7 @@ public class RPCServlet extends AbstractRPCServlet {
   protected void loadServices(final ServletConfig config) throws Exception {
 
     final String path = config.getInitParameter("services");
-    logger.debug("loading services from " + path);
+    logger.finest("loading services from " + path);
     final Properties serviceDefs = new Properties();
     final InputStream in = config.getServletContext().
         getResourceAsStream(path);
@@ -107,7 +107,7 @@ public class RPCServlet extends AbstractRPCServlet {
     for (final Entry<Object,Object> entry : serviceDefs.entrySet() ) {
       final String serviceName = (String)entry.getKey();
       final String serviceClassName = (String)entry.getValue();
-      logger.debug(serviceName + " = " + serviceClassName);
+      logger.finest(serviceName + " = " + serviceClassName);
       registerService(serviceName,
           Class.forName(serviceClassName).newInstance() );
     }
