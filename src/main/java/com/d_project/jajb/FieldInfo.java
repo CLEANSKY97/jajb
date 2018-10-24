@@ -3,9 +3,8 @@ package com.d_project.jajb;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * FieldInfo
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class FieldInfo {
 
   protected static final Logger logger =
-      LoggerFactory.getLogger(FieldInfo.class);
+      Logger.getLogger(FieldInfo.class.getName() );
 
   private final String name;
   private final int order;
@@ -77,7 +76,7 @@ public class FieldInfo {
     try {
       setter.invoke(target, value);
     } catch(IllegalArgumentException e) { 
-      logger.debug(setter + ",value=" + value, e);
+      logger.log(Level.FINEST, setter + ",value=" + value, e);
       throw e;
     } catch(RuntimeException e) { 
       throw e;

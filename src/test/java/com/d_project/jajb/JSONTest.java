@@ -2,11 +2,10 @@ package com.d_project.jajb;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.logging.Logger;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.d_project.jajb.helper.ObjectUtil;
 
@@ -213,7 +212,7 @@ public class JSONTest {
     Assert.assertNull(out.getItems().get(2).getF1() );
   }
 
-  protected final Logger logger = LoggerFactory.getLogger(getClass() );
+  protected final Logger logger = Logger.getLogger(getClass().getName() );
 
   protected interface ObjectHandler {
     Object handle(Object obj);

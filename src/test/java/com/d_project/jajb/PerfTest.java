@@ -7,9 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
 
 public class PerfTest {
 
@@ -18,7 +16,7 @@ public class PerfTest {
   }
 
   protected static final Logger logger =
-      LoggerFactory.getLogger(PerfTest.class);
+      Logger.getLogger(PerfTest.class.getName() );
 
   private static final String strChars = "abcdefgh12345678";
   private Random random;

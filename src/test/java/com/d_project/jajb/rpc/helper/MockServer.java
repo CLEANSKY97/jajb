@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -19,9 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * MockServer
  * @author Kazuhiko Arase
@@ -30,7 +28,7 @@ public class MockServer implements InvocationHandler {
 
   private static final String SERVICES = "/WEB-INF/rpc/service.properties";
 
-  protected static final Logger logger = LoggerFactory.getLogger(MockServer.class);
+  protected static final Logger logger = Logger.getLogger(MockServer.class.getName() );
 
   private final ServletConfig config;
   private final ServletContext servletContext;
@@ -68,9 +66,9 @@ public class MockServer implements InvocationHandler {
     in = null;
     out = null;
     statusCode = HttpServletResponse.SC_OK;
-    logger.debug("reqData: " + requestData);
+    logger.finest("reqData: " + requestData);
     target.service(request, response);
-    logger.debug("resData: " + getResponseData() );
+    logger.finest("resData: " + getResponseData() );
     if (statusCode != HttpServletResponse.SC_OK) {
       throw new Exception("SC:" + statusCode);
     }

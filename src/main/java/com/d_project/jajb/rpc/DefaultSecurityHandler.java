@@ -2,13 +2,12 @@ package com.d_project.jajb.rpc;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * DefaultSecurityHandler
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultSecurityHandler implements SecurityHandler {
 
   protected static final Logger logger =
-      LoggerFactory.getLogger(DefaultSecurityHandler.class);
+      Logger.getLogger(DefaultSecurityHandler.class.getName() );
 
   public DefaultSecurityHandler() {
   }
@@ -32,8 +31,8 @@ public class DefaultSecurityHandler implements SecurityHandler {
       final HttpServletRequest request,
       final Map<String, Object> opts,
       final Method targetMethod) {
-    if (logger.isDebugEnabled() ) {
-      logger.debug("isAuthorized " + opts + " - " + targetMethod);
+    if (logger.isLoggable(Level.FINEST) ) {
+      logger.finest("isAuthorized " + opts + " - " + targetMethod);
     }
     // allow all.
     return true;
