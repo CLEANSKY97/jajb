@@ -224,7 +224,9 @@ public class JSONTest {
 
   protected static void assertInt(String numStr) throws Exception {
     final BigDecimal bigDec = new BigDecimal(numStr);
-    final BigInteger bigInt = new BigInteger(numStr);
+    // TODO java6 does not support '+'
+    final BigInteger bigInt = numStr.startsWith("+")?
+        new BigInteger(numStr.substring(1)) : new BigInteger(numStr);
     Assert.assertEquals(bigDec, JSON.parse(numStr, BigDecimal.class) );
     Assert.assertEquals(bigInt, JSON.parse(numStr, BigInteger.class) );
     Assert.assertEquals(bigDec.byteValue(), (byte)JSON.parse(numStr, Byte.TYPE) );

@@ -3,6 +3,7 @@ package com.d_project.jajb;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,8 +34,12 @@ public class FieldInfo {
       if (Iterable.class.isAssignableFrom(type) ) {
         final ParameterizedType pt =
             (ParameterizedType)field.getGenericType();
-        iterableType = Class.forName(
-            pt.getActualTypeArguments()[0].getTypeName() );
+        final Type it = pt.getActualTypeArguments()[0];
+        if (it instanceof Class) {
+          iterableType = (Class<?>)it;
+        } else {
+          iterableType = Class.forName(it.toString() );
+        }
       } else {
         iterableType = null;
       }

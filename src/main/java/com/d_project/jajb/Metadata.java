@@ -3,6 +3,7 @@ package com.d_project.jajb;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -59,7 +60,7 @@ class Metadata {
       }
 
       // sort fields order.
-      fieldInfoList.sort(fieldInfoComparator);
+      Collections.sort(fieldInfoList, fieldInfoComparator);
 
       for (final FieldInfo fieldInfo : fieldInfoList) {
         if (!fieldInfoMap.containsKey(fieldInfo.getName() ) ) {
