@@ -1,4 +1,4 @@
-package com.d_project.jajb.websocket;
+package com.d_project.jajb.rpc.ws;
 
 import java.util.List;
 import java.util.Map;
@@ -32,38 +32,37 @@ implements ServletContextListener {
         (ServerContainer)servletContext.getAttribute(
         "javax.websocket.server.ServerContainer");
 
-    List<Map<String,String>> endpoints;
-
+    List<Map<String, String>> endpoints;
     try {
-      endpoints = (List<Map<String,String>>)JSON.parse(
-              servletContext.getInitParameter("ws.config") );
-    } catch(final Exception e) {
+      endpoints =
+          (List<Map<String, String>>)JSON.
+          parse(servletContext.getInitParameter("ws.config") );
+    } catch(RuntimeException e) {
+      throw e;
+    } catch(Exception e) {
       throw new RuntimeException(e);
     }
 
     for (final Map<String, String> ep : endpoints) {
       try {
         final String path = ep.get("path");
-        final String endpointClassName = ep.get("endpointClassName");
-        logger.info("register endpoint " + path + " - " + endpointClassName);
+        final String factory = ep.get("factory");
+        logger.info("register endpoint " + path + " - " + factory);
         final ServerEndpointConfig config = ServerEndpointConfig.Builder.
-            create(Class.forName(endpointClassName), path).
+            create(WSEndpoint.class, path).
             configurator(new WSConfigurator() ).
             build();
         config.getUserProperties().put("servletContext", servletContext);
+        config.getUserProperties().put("factory", factory);
         serverContainer.addEndpoint(config);
-      } catch(final DeploymentException e) {
-        throw new RuntimeException(e);
-      } catch(final RuntimeException e) {
-        throw e;
-      } catch(final Exception e) {
+      } catch(DeploymentException e) {
         throw new RuntimeException(e);
       }
     }
   }
 
   @Override
-  public void contextDestroyed(ServletContextEvent event) {
+  public void contextDestroyed(final ServletContextEvent event) {
     logger.info("contextDestroyed");
   }
 }
