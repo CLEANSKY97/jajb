@@ -47,8 +47,7 @@ implements ServletContextListener {
       try {
         final String path = ep.get("path");
         final String factory = ep.get("factory");
-        logger.info("register endpoint " +
-            path + " - " + factory);
+        logger.info("register endpoint " + path + " - " + factory);
         final ServerEndpointConfig config = ServerEndpointConfig.Builder.
             create(WSEndpoint.class, path).
             configurator(new WSConfigurator() ).
