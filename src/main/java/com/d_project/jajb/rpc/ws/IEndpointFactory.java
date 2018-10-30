@@ -3,9 +3,9 @@ package com.d_project.jajb.rpc.ws;
 import java.util.Map;
 
 /**
- * IEndpointContext
+ * IEndpointFactory
  * @author Kazuhiko Arase
  */
-public interface IEndpointContext {
+public interface IEndpointFactory {
   IEndpoint createEndpoint(Map<String,Object> endpointConfig);
 }

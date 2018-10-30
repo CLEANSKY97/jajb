@@ -13,7 +13,6 @@ import javax.websocket.server.ServerEndpointConfig;
 
 import com.d_project.jajb.JSON;
 
-
 /**
  * WSServletContextListener
  * @author Kazuhiko Arase

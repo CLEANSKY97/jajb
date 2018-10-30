@@ -55,13 +55,14 @@ public class WSEndpoint extends Endpoint {
       endpointConfig.put("$logger", logger);
       endpointConfig.put("$session", session);
       endpointConfig.put("$servletContext", servletContext);
-      endpointConfig.put("$request", config.getUserProperties().get("request") );
+      endpointConfig.put("$request",
+          config.getUserProperties().get("request") );
 
       // clear properties.
       config.getUserProperties().clear();
 
-      return ((IEndpointContext)Class.
-          forName(factory).newInstance()).createEndpoint(endpointConfig);
+      return ((IEndpointFactory)Class.forName(factory).newInstance() ).
+          createEndpoint(endpointConfig);
 
     } catch(RuntimeException e) {
       throw e;
@@ -86,7 +87,7 @@ public class WSEndpoint extends Endpoint {
 
   @Override
   public void onClose(Session session, CloseReason closeReason) {
-    Context context = getContextMap().get(session.getId() );
+    final Context context = getContextMap().get(session.getId() );
     context.getEndpoint().onClose(closeReason);
     getContextMap().remove(session.getId() );
   }
