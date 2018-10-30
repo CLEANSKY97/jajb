@@ -58,7 +58,7 @@ repositories {
 dependencies {
 
   compile "org.springframework:spring-web:3.0.5.RELEASE"
-  compile "com.d-project:jajb:0.1.7"
+  compile "com.d-project:jajb:0.1.8"
 
   providedCompile "javax.servlet:servlet-api:2.3"
 
