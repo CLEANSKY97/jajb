@@ -1,4 +1,4 @@
-package com.d_project.jajb.websocket;
+package com.d_project.jajb.rpc.ws;
 
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
@@ -12,9 +12,9 @@ public class WSConfigurator extends ServerEndpointConfig.Configurator {
 
   @Override
   public void modifyHandshake(
-    final ServerEndpointConfig config,
-    final HandshakeRequest request,
-    final HandshakeResponse response
+    ServerEndpointConfig config, 
+    HandshakeRequest request, 
+    HandshakeResponse response
   ) {
     config.getUserProperties().put("request", request);
   }
