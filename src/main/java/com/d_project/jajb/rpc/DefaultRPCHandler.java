@@ -30,6 +30,13 @@ implements RPCHandler {
     this.serviceProvider = serviceProvider;
   }
 
+  @SuppressWarnings("unchecked")
+  @Override
+  public Map<String, Object> getOpts() {
+    return (Map<String, Object>)((List<Object>)getLastData()).get(0);
+  }
+
+  @Override
   public Method getTargetMethod() {
     return targetMethod;
   }
