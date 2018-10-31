@@ -43,7 +43,6 @@ public abstract class AbstractRPCServlet extends HttpServlet {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   protected void doPost(
     final HttpServletRequest request,
     final HttpServletResponse response
@@ -51,21 +50,24 @@ public abstract class AbstractRPCServlet extends HttpServlet {
 
     request.setCharacterEncoding("UTF-8");
 
+    final RPCHandler handler = createHandler();
+
+    {
+      final JSONParser parser = new JSONParser(request.getReader(), handler);
+      try {
+        parser.parseAny();
+      } finally {
+        parser.close();
+      }
+    }
+
     final Map<String,Object> responseData =
         new LinkedHashMap<String, Object>();
 
-    final RPCHandler handler = createHandler();
-    final JSONParser parser = new JSONParser(request.getReader(), handler);
-
     try {
 
-      parser.parseAny();
-
-      final List<Object> params = (List<Object>)handler.getLastData();
-
       if (getSecurityHandler().isAuthorized(request,
-          (Map<String,Object>)params.get(0),
-          handler.getTargetMethod() ) ) {
+          handler.getOpts(), handler.getTargetMethod() ) ) {
 
         final Object result = handler.call();
         responseData.put(STATUS_KEY, STATUS_SUCCESS);
@@ -108,9 +110,6 @@ public abstract class AbstractRPCServlet extends HttpServlet {
         responseData.put(STATUS_KEY, STATUS_FAILURE);
         responseData.put(MESSAGE_KEY, e.getMessage() );
       }
-
-    } finally {
-      parser.close();
     }
 
     if (responseData.get(STATUS_KEY).equals(STATUS_SUCCESS) ) {

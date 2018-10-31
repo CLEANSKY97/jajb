@@ -1,6 +1,7 @@
 package com.d_project.jajb.rpc;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import com.d_project.jajb.JSONParserHandler;
 
@@ -9,7 +10,7 @@ import com.d_project.jajb.JSONParserHandler;
  * @author Kazuhiko Arase
  */
 public interface RPCHandler extends JSONParserHandler {
+  Map<String,Object> getOpts();
   Method getTargetMethod() throws Exception;
   Object call() throws Exception;
-  Object getLastData();
 }
