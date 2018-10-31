@@ -9,9 +9,11 @@ import javax.websocket.EndpointConfig;
 import com.d_project.jajb.rpc.ws.IEndpoint;
 import com.d_project.jajb.rpc.ws.IEndpointFactory;
 
-public class WSEndpointFactory implements IEndpointFactory {
+public class MyEndpointFactory implements IEndpointFactory {
+
   private static final Logger logger =
-      Logger.getLogger(WSEndpointFactory.class.getName() );
+      Logger.getLogger(MyEndpointFactory.class.getName() );
+
   @Override
   public IEndpoint createEndpoint(
       final Map<String, Object> endpointConfig) {

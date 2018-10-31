@@ -15,8 +15,8 @@
     <param-value>
     [
       {
-        "path": "/wstest",
-        "factory": "ws.WSEndpointFactory"
+        "path": "/my-ws",
+        "factory": "ws.MyEndpointFactory"
       }
     ]
     </param-value>
