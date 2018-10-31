@@ -5,5 +5,5 @@ package com.d_project.jajb.rpc.ws;
  * @author Kazuhiko Arase
  */
 public interface IEndpointFactory {
-  IEndpoint createEndpoint(WSEndpointConfig endpointConfig);
+  IEndpoint createEndpoint(IWSEndpointConfig endpointConfig);
 }
