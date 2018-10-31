@@ -8,11 +8,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
+import javax.websocket.server.HandshakeRequest;
 
 /**
  * WSEndpoint
@@ -45,18 +47,31 @@ public class WSEndpoint extends Endpoint {
       final Session session, final EndpointConfig config) {
     try {
 
-      final ServletContext servletContext = (ServletContext)config.
-          getUserProperties().get("servletContext");
-      final String factory = (String)config.
-          getUserProperties().get("factory");
+      final Map<String, Object> userProps = config.getUserProperties();
+      final String factory = (String)userProps.get("factory");
 
-      final Map<String,Object> endpointConfig = new HashMap<String,Object>();
-      endpointConfig.put("$global", global);
-      endpointConfig.put("$logger", logger);
-      endpointConfig.put("$session", session);
-      endpointConfig.put("$servletContext", servletContext);
-      endpointConfig.put("$request",
-          config.getUserProperties().get("request") );
+      final WSEndpointConfig endpointConfig = new WSEndpointConfig() {
+        @Override
+        public Map<String, Object> getGlobal() {
+          return global;
+        }
+        @Override
+        public Logger getLogger() {
+          return logger;
+        }
+        @Override
+        public HandshakeRequest getRequest() {
+          return (HandshakeRequest)userProps.get("request");
+        }
+        @Override
+        public ServletContext getServletContext() {
+          return (ServletContext)userProps.get("servletContext");
+        }
+        @Override
+        public Session getSession() {
+          return session;
+        }
+      };
 
       // clear properties.
       config.getUserProperties().clear();

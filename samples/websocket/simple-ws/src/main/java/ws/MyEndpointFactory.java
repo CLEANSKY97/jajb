@@ -17,7 +17,7 @@ public class MyEndpointFactory implements IEndpointFactory {
   @Override
   public IEndpoint createEndpoint(
       final Map<String, Object> endpointConfig) {
-
+    p
     return new IEndpoint() {
       @Override
       public void onOpen(EndpointConfig config) {
