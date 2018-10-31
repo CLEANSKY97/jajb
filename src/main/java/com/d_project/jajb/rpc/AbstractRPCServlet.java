@@ -48,11 +48,10 @@ public abstract class AbstractRPCServlet extends HttpServlet {
     final HttpServletResponse response
   ) throws ServletException, IOException {
 
-    request.setCharacterEncoding("UTF-8");
-
     final RPCHandler handler = createHandler();
 
     {
+      request.setCharacterEncoding("UTF-8");
       final JSONParser parser = new JSONParser(request.getReader(), handler);
       try {
         parser.parseAny();
