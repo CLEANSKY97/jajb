@@ -8,10 +8,10 @@ import javax.websocket.Session;
 import javax.websocket.server.HandshakeRequest;
 
 /**
- * WSEndpointConfig
+ * IWSEndpointConfig
  * @author Kazuhiko Arase
  */
-public interface WSEndpointConfig {
+public interface IWSEndpointConfig {
   Logger getLogger();
   Map<String,Object> getGlobal();
   Session getSession();

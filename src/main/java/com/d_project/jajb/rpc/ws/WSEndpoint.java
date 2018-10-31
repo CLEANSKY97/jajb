@@ -50,7 +50,7 @@ public class WSEndpoint extends Endpoint {
       final Map<String, Object> userProps = config.getUserProperties();
       final String factory = (String)userProps.get("factory");
 
-      final WSEndpointConfig endpointConfig = new WSEndpointConfig() {
+      final IWSEndpointConfig endpointConfig = new IWSEndpointConfig() {
         @Override
         public Map<String, Object> getGlobal() {
           return global;
