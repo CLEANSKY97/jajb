@@ -13,10 +13,7 @@ import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
 
 import com.d_project.jajb.JSON;
-import com.d_project.jajb.JSONField;
 import com.d_project.jajb.JSONParser;
-import com.d_project.jajb.JSONType;
-import com.d_project.jajb.rpc.Callable;
 import com.d_project.jajb.rpc.DefaultRPCHandler;
 import com.d_project.jajb.rpc.RPCHandler;
 import com.d_project.jajb.rpc.ServiceProvider;
@@ -36,30 +33,36 @@ public class MyEndpoint implements IEndpoint {
     }
   };
 
-  private ServerService serverService;
+  private IWSEndpointConfig config;
+  private Object serverService;
+
+  @SuppressWarnings("unchecked")
+  protected <C> C newClientService(Class<C> clientServiceClass) throws Exception {
+    return (C)Proxy.
+        newProxyInstance(getClass().getClassLoader(),
+        new Class[] { clientServiceClass },
+        new InvocationHandler() {
+          @Override
+          public Object invoke(Object proxy, Method method, Object[] args)
+              throws Throwable {
+            final Map<String,Object> opts = new LinkedHashMap<String,Object>();
+            opts.put("methodName", method.getName() );
+            config.getSession().getBasicRemote().sendText(
+                JSON.stringify(Arrays.asList(opts, args) ) );
+            return null;
+          }
+        });
+  }
 
   @Override
   public void init(final IWSEndpointConfig config) {
 
+    this.config = config;
+
     try {
 
-      final ClientService clientService = (ClientService)Proxy.
-          newProxyInstance(getClass().getClassLoader(),
-          new Class[] { ClientService.class },
-          new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args)
-                throws Throwable {
-
-              final Map<String,Object> opts = new LinkedHashMap<String,Object>();
-              opts.put("methodName", method.getName() );
-
-              config.getSession().getBasicRemote().sendText(
-                  JSON.stringify(Arrays.asList(opts, args) ) );
-              return null;
-            }
-          });
-      serverService = new ServerService(clientService);
+      serverService = new MyServerService(
+          newClientService(MyClientService.class) );
 
     } catch(RuntimeException e) {
       throw e;
@@ -112,41 +115,5 @@ public class MyEndpoint implements IEndpoint {
 
   protected ServiceProvider getServiceProvider() {
     return serviceProvider;
-  }
-
-  public class ServerService {
-    public final ClientService clientService;
-    public ServerService(final ClientService clientService) {
-      this.clientService = clientService;
-    }
-    @Callable
-    public void login(MyVO vo) {
-     logger.info("login called."); 
-     clientService.login(vo);
-    }
-  }
-
-  public interface ClientService {
-    void login(MyVO vo);
-  }
-
-  @JSONType
-  public static class MyVO {
-    @JSONField
-    private String f1;
-    @JSONField
-    private int f2;
-    public String getF1() {
-      return f1;
-    }
-    public void setF1(String f1) {
-      this.f1 = f1;
-    }
-    public int getF2() {
-      return f2;
-    }
-    public void setF2(int f2) {
-      this.f2 = f2;
-    }
   }
 }
