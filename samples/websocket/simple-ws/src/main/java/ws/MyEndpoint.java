@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
-import javax.websocket.Session;
 
 import com.d_project.jajb.JSON;
 import com.d_project.jajb.JSONField;
@@ -25,28 +24,48 @@ import com.d_project.jajb.rpc.ws.IEndpoint;
 import com.d_project.jajb.rpc.ws.IWSEndpointConfig;
 
 // prototype
-public class MyEndpoint
-implements IEndpoint, InvocationHandler {
+public class MyEndpoint implements IEndpoint {
 
   private static final Logger logger =
       Logger.getLogger(MyEndpoint.class.getName() );
 
-  private Session session;
-  private ClientService clientService;
+  private ServiceProvider serviceProvider =  new ServiceProvider() {
+    @Override
+    public Object getServiceByName(String serviceName) {
+      return serverService;
+    }
+  };
+
+  private ServerService serverService;
 
   @Override
   public void init(final IWSEndpointConfig config) {
 
     try {
-      clientService = (ClientService)Proxy.newProxyInstance(getClass().getClassLoader(),
-          new Class[] { ClientService.class }, this);
+
+      final ClientService clientService = (ClientService)Proxy.
+          newProxyInstance(getClass().getClassLoader(),
+          new Class[] { ClientService.class },
+          new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args)
+                throws Throwable {
+
+              final Map<String,Object> opts = new LinkedHashMap<String,Object>();
+              opts.put("methodName", method.getName() );
+
+              config.getSession().getBasicRemote().sendText(
+                  JSON.stringify(Arrays.asList(opts, args) ) );
+              return null;
+            }
+          });
+      serverService = new ServerService(clientService);
+
     } catch(RuntimeException e) {
       throw e;
     } catch(Exception e) {
       throw new RuntimeException(e);
     }
-
-    session = config.getSession();
   }
 
   @Override
@@ -92,30 +111,19 @@ implements IEndpoint, InvocationHandler {
   }
 
   protected ServiceProvider getServiceProvider() {
-    return new ServiceProvider() {
-      @Override
-      public Object getServiceByName(String serviceName) {
-        return MyEndpoint.this;
-      }
-    };
+    return serviceProvider;
   }
 
-  @Callable
-  public void login(MyVO vo) {
-   logger.info("login called."); 
-   clientService.login(vo);
-  }
-
-  @Override
-  public Object invoke(Object proxy, Method method, Object[] args)
-      throws Throwable {
-
-    final Map<String,Object> opts = new LinkedHashMap<String,Object>();
-    opts.put("methodName", method.getName() );
-
-    session.getBasicRemote().sendText(
-        JSON.stringify(Arrays.asList(opts, args) ) );
-    return null;
+  public class ServerService {
+    public final ClientService clientService;
+    public ServerService(final ClientService clientService) {
+      this.clientService = clientService;
+    }
+    @Callable
+    public void login(MyVO vo) {
+     logger.info("login called."); 
+     clientService.login(vo);
+    }
   }
 
   public interface ClientService {
