@@ -57,7 +57,7 @@ repositories {
 
 dependencies {
 
-  compile "com.d-project:jajb:0.1.11"
+  compile "com.d-project:jajb:0.1.13"
 
   providedCompile "javax.servlet:servlet-api:2.3"
   providedCompile 'javax.websocket:javax.websocket-api:1.1'

@@ -11,11 +11,15 @@
 
   var onopen = function(event) {
     console.log(event.type);
-    send({
-      action: 'login',
-      uid: opts.uid,
-      lang: navigator.language
-    });
+    send([
+      {
+        serviceName : '*',
+        methodName : 'login',
+        uid: opts.uid,
+        lang: navigator.language
+      },
+      [{ f1: 'abc', f2: 123 }]
+    ]);
   };
 
   var onclose = function(event) {
