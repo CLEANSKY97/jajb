@@ -16,7 +16,7 @@
     [
       {
         "path": "/my-ws",
-        "factory": "ws.MyEndpointFactory"
+        "factory": "ws.MyEndpoint"
       }
     ]
     </param-value>

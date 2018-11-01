@@ -22,21 +22,20 @@ import com.d_project.jajb.rpc.DefaultRPCHandler;
 import com.d_project.jajb.rpc.RPCHandler;
 import com.d_project.jajb.rpc.ServiceProvider;
 import com.d_project.jajb.rpc.ws.IEndpoint;
-import com.d_project.jajb.rpc.ws.IEndpointFactory;
 import com.d_project.jajb.rpc.ws.IWSEndpointConfig;
 
 // prototype
-public class MyEndpointFactory
-implements IEndpointFactory, IEndpoint, InvocationHandler {
+public class MyEndpoint
+implements IEndpoint, InvocationHandler {
 
   private static final Logger logger =
-      Logger.getLogger(MyEndpointFactory.class.getName() );
+      Logger.getLogger(MyEndpoint.class.getName() );
 
   private Session session;
   private ClientService clientService;
 
   @Override
-  public IEndpoint createEndpoint(final IWSEndpointConfig config) {
+  public void init(final IWSEndpointConfig config) {
 
     try {
       clientService = (ClientService)Proxy.newProxyInstance(getClass().getClassLoader(),
@@ -48,7 +47,6 @@ implements IEndpointFactory, IEndpoint, InvocationHandler {
     }
 
     session = config.getSession();
-    return this;
   }
 
   @Override
@@ -97,7 +95,7 @@ implements IEndpointFactory, IEndpoint, InvocationHandler {
     return new ServiceProvider() {
       @Override
       public Object getServiceByName(String serviceName) {
-        return MyEndpointFactory.this;
+        return MyEndpoint.this;
       }
     };
   }
