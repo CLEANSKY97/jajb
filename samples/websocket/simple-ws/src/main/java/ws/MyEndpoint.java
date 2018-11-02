@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
+import javax.websocket.Session;
 
 import com.d_project.jajb.JSON;
 import com.d_project.jajb.JSONParser;
@@ -37,7 +38,7 @@ public class MyEndpoint implements IEndpoint {
   public void init(final IWSEndpointConfig config) throws Exception {
     this.config = config;
     this.serverService = new MyServerService(
-        newClientService(MyClientService.class) );
+        newClientService(MyClientService.class, config.getSession() ) );
   }
 
   @Override
@@ -75,11 +76,13 @@ public class MyEndpoint implements IEndpoint {
   }
 
   @SuppressWarnings("unchecked")
-  protected <C> C newClientService(
-      final Class<C> clientServiceClass) throws Exception {
+  protected static <C> C newClientService(
+    final Class<C> clientServiceClass,
+    final Session session
+  ) throws Exception {
 
-    return (C)Proxy.
-      newProxyInstance(getClass().getClassLoader(),
+    return (C)Proxy.newProxyInstance(
+      clientServiceClass.getClassLoader(),
       new Class[] { clientServiceClass },
       new InvocationHandler() {
         @Override
@@ -87,7 +90,7 @@ public class MyEndpoint implements IEndpoint {
             throws Throwable {
           final Map<String,Object> opts = new LinkedHashMap<String,Object>();
           opts.put("methodName", method.getName() );
-          config.getSession().getBasicRemote().sendText(
+          session.getBasicRemote().sendText(
               JSON.stringify(Arrays.asList(opts, args) ) );
           return null;
         }
