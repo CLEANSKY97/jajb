@@ -22,7 +22,7 @@ import com.d_project.jajb.rpc.ws.IWSEndpointConfig;
 // prototype
 public class MyEndpoint implements IEndpoint {
 
-  private ServiceProvider serviceProvider = new ServiceProvider() {
+  private final ServiceProvider serviceProvider = new ServiceProvider() {
     @Override
     public Object getServiceByName(String serviceName) {
       return serverService;
@@ -30,57 +30,40 @@ public class MyEndpoint implements IEndpoint {
   };
 
   private IWSEndpointConfig config;
+
   private Object serverService;
 
   @Override
-  public void init(final IWSEndpointConfig config) {
-
+  public void init(final IWSEndpointConfig config) throws Exception {
     this.config = config;
-
-    try {
-
-      serverService = new MyServerService(
-          newClientService(MyClientService.class) );
-
-    } catch(RuntimeException e) {
-      throw e;
-    } catch(Exception e) {
-      throw new RuntimeException(e);
-    }
+    this.serverService = new MyServerService(
+        newClientService(MyClientService.class) );
   }
 
   @Override
-  public void onOpen(EndpointConfig config) {
+  public void onOpen(EndpointConfig config) throws Exception {
   }
 
   @Override
-  public void onClose(CloseReason closeReason) {
+  public void onClose(CloseReason closeReason) throws Exception {
   }
 
   @Override
-  public void onMessage(String message) {
+  public void onMessage(String message) throws Exception {
 
-    try {
+    final RPCHandler handler = createHandler();
 
-      final RPCHandler handler = createHandler();
-
-      {
-        final JSONParser parser = new JSONParser(
-            new StringReader(message), handler);
-        try {
-          parser.parseAny();
-        } finally {
-          parser.close();
-        }
+    {
+      final JSONParser parser = new JSONParser(
+          new StringReader(message), handler);
+      try {
+        parser.parseAny();
+      } finally {
+        parser.close();
       }
-
-      handler.call();
-
-    } catch(RuntimeException e) {
-      throw e;
-    } catch(Exception e) {
-      throw new RuntimeException(e);
     }
+
+    handler.call();
   }
 
   protected final RPCHandler createHandler() {
@@ -94,6 +77,7 @@ public class MyEndpoint implements IEndpoint {
   @SuppressWarnings("unchecked")
   protected <C> C newClientService(
       final Class<C> clientServiceClass) throws Exception {
+
     return (C)Proxy.
       newProxyInstance(getClass().getClassLoader(),
       new Class[] { clientServiceClass },
