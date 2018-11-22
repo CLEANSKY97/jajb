@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="Utf-8"?>
+<Context>
+
+<!-- server.xml
+
+  <GlobalNamingResources>
+
+         ...
+
+    <Resource auth="Container" type="javax.sql.DataSource"
+      maxActive="1" maxIdle="1" maxWait="1000"
+      name="jdbc/GLOBAL_TESTDB_DS"
+      driverClassName="com.ibm.db2.jcc.DB2Driver" 
+      url="jdbc:db2://localhost:50000/TESTDB"
+      username="db2admin"
+      password="db2"
+    />
+
+         ...
+
+  </GlobalNamingResources>
+
+ -->
+
+  <ResourceLink
+    global="jdbc/GLOBAL_TESTDB_DS"
+    name="jdbc/APP_DS"
+    type="javax.sql.DataSource"
+  />
+
+</Context>

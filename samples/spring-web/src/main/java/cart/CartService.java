@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.d_project.jajb.rpc.Callable;
@@ -15,8 +16,13 @@ import cart.CartVO.ItemVO;
 @Service("CartService")
 public class CartService {
 
+  @Autowired
+  private UserMapper userMapper;
+
   @Callable
   public CartVO newCart() {
+
+    System.out.println("user:" + userMapper.getUser("test") );
 
     // create a new cart with no items.
     CartVO cartVO = new CartVO();

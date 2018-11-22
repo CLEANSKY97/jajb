@@ -1,27 +1,110 @@
 <!doctype html>
 <html>
 <head>
+
+  <!-- Required meta tags -->
   <meta charset="UTF-8" />
-  <style>
-.number { text-align: right; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
   <script
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
   <script src="assets/jquery-ajax-wrapper.js"></script>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous" />
+
+  <style>
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.number { text-align: right; }
+
+  </style>
+
 </head>
 <body>
 
+
+
+
+
+
 <div id="myapp">
+
+  <div v-if="modal.show">
+    <transition name="modal">
+      <div class="modal-mask">
+        <div class="modal-wrapper">
+
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{modal.title}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" @click="modal.show = false">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>{{modal.message}}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn primary" @click="modal.show = false">Close</button>
+                <!-- 
+                <button type="button" class="btn btn-secondary" @click="modal.show = false">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+                 -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </transition>
+  </div>
+
   <div v-if="cartVO">
-    <label>CartId: {{cartVO.cartId}}</label>
-    <div>
-      <button @click="add_clickHandler">Add</button>
-      <button @click="remove_clickHandler">Remove</button>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div>
+        <label>CartId: {{cartVO.cartId}}</label>
+      </div>
+
+    <div class="container text-white">
+      <div class="row">
+        <div class="col-4">
+          <button type="button" class="btn btn-light"
+            @click="add_clickHandler">Add</button>
+          <button type="button" class="btn btn-light"
+            @click="remove_clickHandler">Remove</button>
+        </div>
+        <div class="col-8">
+        </div>
+      </div>
     </div>
-    <table>
+    </nav>
+
+    <table class="table">
       <thead>
         <tr>
           <th>&#x0a;</th>
@@ -47,6 +130,14 @@
 </div>
 
 <script src="cart.js"></script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<!-- 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+ -->
 
 </body>
 </html>
