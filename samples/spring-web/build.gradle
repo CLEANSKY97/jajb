@@ -59,12 +59,11 @@ repositories {
 dependencies {
 
   compile "org.springframework:spring-web:3.0.5.RELEASE"
-  compile "org.springframework:spring-jdbc:3.0.5.RELEASE"
+  compile "com.d-project:jajb:0.1.14"
 
+  compile "org.springframework:spring-jdbc:3.0.5.RELEASE"
   compile "org.mybatis:mybatis:3.2.8"
   compile "org.mybatis:mybatis-spring:1.2.2"
-
-  compile "com.d-project:jajb:0.1.14"
 
   providedCompile "javax.servlet:servlet-api:2.3"
 
