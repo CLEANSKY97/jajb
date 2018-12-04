@@ -53,6 +53,7 @@ sourceSets {
 
 repositories {
   mavenCentral()
+  mavenLocal()
 }
 
 dependencies {
@@ -63,7 +64,7 @@ dependencies {
   compile "org.mybatis:mybatis:3.2.8"
   compile "org.mybatis:mybatis-spring:1.2.2"
 
-  compile "com.d-project:jajb:0.1.8"
+  compile "com.d-project:jajb:0.1.14"
 
   providedCompile "javax.servlet:servlet-api:2.3"
 
