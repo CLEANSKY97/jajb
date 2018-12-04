@@ -1,14 +1,12 @@
 package com.d_project.jajb.rpc.ws;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
@@ -76,8 +74,10 @@ public class WSEndpoint extends Endpoint {
       // clear properties.
       config.getUserProperties().clear();
 
-      return ((IEndpointFactory)Class.forName(factory).newInstance() ).
-          createEndpoint(endpointConfig);
+      final IEndpoint endpoint =
+          (IEndpoint)Class.forName(factory).newInstance();
+      endpoint.init(endpointConfig);
+      return endpoint;
 
     } catch(RuntimeException e) {
       throw e;
@@ -93,17 +93,35 @@ public class WSEndpoint extends Endpoint {
     session.addMessageHandler(new MessageHandler.Whole<String>() {
       @Override
       public void onMessage(String message) {
-        context.getEndpoint().onMessage(message);
+        try {
+          context.getEndpoint().onMessage(message);
+        } catch(RuntimeException e) {
+          throw e;
+        } catch(Exception e) {
+          throw new RuntimeException(e);
+        }
       }
     });
     getContextMap().put(session.getId(), context);
-    context.getEndpoint().onOpen(config);
+    try {
+      context.getEndpoint().onOpen(config);
+    } catch(RuntimeException e) {
+      throw e;
+    } catch(Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
   public void onClose(Session session, CloseReason closeReason) {
     final Context context = getContextMap().get(session.getId() );
-    context.getEndpoint().onClose(closeReason);
+    try {
+      context.getEndpoint().onClose(closeReason);
+    } catch(RuntimeException e) {
+      throw e;
+    } catch(Exception e) {
+      throw new RuntimeException(e);
+    }
     getContextMap().remove(session.getId() );
   }
 

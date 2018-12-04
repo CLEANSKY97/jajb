@@ -1,6 +1,6 @@
 
-apply plugin: "war"
-apply plugin: "eclipse-wtp"
+apply plugin: "java"
+apply plugin: "eclipse"
 
 sourceCompatibility = 1.6
 
@@ -12,15 +12,7 @@ configurations {
 
 eclipse {
   classpath {
-    defaultOutputDir = file("build/wtp/classes")
-  }
-  wtp {
-    component {
-      contextPath = "simple-ws"
-      deployName = "simple-ws"
-      resource sourcePath: "src/main/webapp", deployPath: "/"
-      property name: "java-output-path", value: "/simple-ws/build/wtp/classes"
-    }
+    defaultOutputDir = file("build/eclipse/classes")
   }
 }
 
@@ -59,9 +51,7 @@ repositories {
 dependencies {
 
   compile "com.d-project:jajb:0.1.14"
-
-  providedCompile "javax.servlet:servlet-api:2.3"
-  providedCompile 'javax.websocket:javax.websocket-api:1.1'
+  compile 'javax.websocket:javax.websocket-api:1.1'
 
   testCompile "junit:junit:4.12"
 
