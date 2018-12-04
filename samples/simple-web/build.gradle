@@ -53,11 +53,12 @@ sourceSets {
 
 repositories {
   mavenCentral()
+  mavenLocal()
 }
 
 dependencies {
 
-  compile "com.d-project:jajb:0.1.8"
+  compile "com.d-project:jajb:0.1.14"
 
   providedCompile "javax.servlet:servlet-api:2.3"
 
